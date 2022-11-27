@@ -1,0 +1,26 @@
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.container {
+    &:first-child {
+        margin-right: 12px;
+    }
+    & img {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+    }
+}
+
+.name {
+    font-size: 18px;
+    line-height: 28px;
+    text-align: end;
+}
+
+.date {
+    color: rgba(0, 0, 0, 0.5);
+}

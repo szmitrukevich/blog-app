@@ -1,0 +1,17 @@
+body {
+    background-color: #E5E5E5!important;
+}
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+button {
+    border: none;
+    background-color: none;
+    transition-duration: 0.5s;
+    &:hover {
+        filter: saturate(2) opacity(0.7);
+    }
+}
