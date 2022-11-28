@@ -16,6 +16,8 @@ const LikeBtn = ({ likes, favorited, slug, isAuthorized }) => {
   ) : null
   return btn
 }
+
+fgdfg
 export default LikeBtn
 
 LikeBtn.defaultProps = { likes: 0, favorited: false, slug: null, isAuthorized: false }
