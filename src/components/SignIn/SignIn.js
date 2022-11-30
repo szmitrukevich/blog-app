@@ -1,11 +1,14 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import { login } from '../../redux/store/asyncDataReducer'
 import classes from './SignIn.module.scss'
 import SubmitBtn from '../SubmitBtn'
+import ErrorMessage from '../ErrorMessage'
 
-const SignIn = () => {
+const SignIn = ({ error, getCurrentUser }) => {
   const {
     register,
     handleSubmit,
@@ -15,12 +18,16 @@ const SignIn = () => {
     /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu
   const email = 'email'
   const password = 'password'
+  const noLogin = error.status === '422' && <p className={classes.warning}>Неверный логин или пароль</p>
+
+  const errorMessage = error.isError && error.status !== '422' && <ErrorMessage />
   return (
     <div className={classes.wrapper}>
+      {errorMessage}
       <form
         className={classes.form}
-        onSubmit={handleSubmit((x) => {
-          console.log(x)
+        onSubmit={handleSubmit((data) => {
+          getCurrentUser({ user: data })
         })}
       >
         <h1 className={classes.title}>Sign In</h1>
@@ -61,7 +68,7 @@ const SignIn = () => {
           />
           <p className={classes.warning}>{errors.password?.message}</p>
         </label>
-
+        {noLogin}
         <SubmitBtn text="Login" />
         <span className={classes.text}>
           Don`t have an account?
@@ -78,8 +85,16 @@ const SignIn = () => {
   )
 }
 
-export default SignIn
+SignIn.defaultProps = { error: {}, getCurrentUser: () => null }
 
-SignIn.defaultProps = { onSubmit: () => null }
+SignIn.propTypes = { error: PropTypes.shape(), getCurrentUser: PropTypes.func }
 
-SignIn.propTypes = { onSubmit: PropTypes.func }
+function mapStateToProps(state) {
+  return { error: state.data.error }
+}
+
+function mapDispatchToProps(dispatch) {
+  return { getCurrentUser: (info) => dispatch(login(info)) }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn)

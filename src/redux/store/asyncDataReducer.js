@@ -1,13 +1,24 @@
 import BlogService from '../../services/blogService'
-// eslint-disable-next-line import-newlines/enforce
-import { toggleIsLoading, updateArticleList, getSingleArticle, throwError, getTotalPages } from '../actions/apiActions'
+import {
+  toggleIsLoading,
+  updateArticleList,
+  getSingleArticle,
+  getToken,
+  getCurrentUser,
+  throwError,
+  getTotalPages,
+  toggleAuthorization,
+} from '../actions/apiActions'
 import {
   ARTICLES_LOAD,
   GET_ARTICLES,
   GET_ARTICLE,
   GET_CURRENT_PAGE,
+  GET_TOKEN,
   GET_ERROR,
   GET_TOTAL_PAGES,
+  GET_USER_INFO,
+  TOGGLE_AUTHORIZATION,
 } from '../actions/actionTypes'
 
 const blog = new BlogService()
@@ -16,8 +27,11 @@ const initialState = {
   totalPages: 0,
   currentPage: 1,
   articles: [],
+  token: null,
+  currentUser: {},
+  isAuthorized: false,
   currentArticle: { body: null },
-  error: false,
+  error: { isError: false, status: 200 },
 }
 
 export const getArticles = (page) => (dispatch) => {
@@ -29,9 +43,9 @@ export const getArticles = (page) => (dispatch) => {
       dispatch(getTotalPages(res.articlesCount))
       dispatch(toggleIsLoading(false))
     })
-    .catch(() => {
+    .catch((e) => {
       dispatch(toggleIsLoading(false))
-      dispatch(throwError(true))
+      dispatch(throwError([true, e.message]))
     })
 }
 
@@ -42,11 +56,25 @@ export const getArticle = (id) => (dispatch) => {
       .then((res) => {
         dispatch(getSingleArticle(res.article))
       })
-      .catch(() => {
-        dispatch(throwError(true))
+      .catch((e) => {
+        dispatch(throwError([true, e.message]))
       })
   }
   dispatch(getSingleArticle({ body: null }))
+}
+
+export const login = (info) => (dispatch) => {
+  blog
+    .login(info)
+    .then((res) => {
+      const { token, ...data } = res
+      dispatch(getCurrentUser({ ...data }))
+      dispatch(getToken(token))
+      dispatch(toggleAuthorization(true))
+    })
+    .catch((e) => {
+      dispatch(throwError([true, e.message]))
+    })
 }
 
 const asyncDataReducer = (state = initialState, { type, payload } = {}) => {
@@ -59,10 +87,16 @@ const asyncDataReducer = (state = initialState, { type, payload } = {}) => {
       return { ...state, currentArticle: payload }
     case GET_TOTAL_PAGES:
       return { ...state, totalPages: payload }
+    case GET_USER_INFO:
+      return { ...state, currentUser: { ...payload } }
+    case TOGGLE_AUTHORIZATION:
+      return { ...state, isAuthorized: payload }
+    case GET_TOKEN:
+      return { ...state, token: payload }
     case GET_CURRENT_PAGE:
       return { ...state, currentPage: payload }
     case GET_ERROR:
-      return { ...state, error: true }
+      return { ...state, error: { isError: payload[0], status: payload[1] } }
     default:
       return state
   }

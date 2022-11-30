@@ -8,7 +8,7 @@ import Article from '../Article'
 import ErrorMessage from '../ErrorMessage'
 import Pagination from '../Pagination'
 
-const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPages, currentPage }) => {
+const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPages, currentPage, isAuthorized }) => {
   const createArticle = (item) => (
     <Article
       author={item.author}
@@ -21,6 +21,7 @@ const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPag
       favorited={item.favorited}
       full={false}
       key={item.slug}
+      isAuthorized={isAuthorized}
     />
   )
 
@@ -37,7 +38,7 @@ const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPag
   )
 
   let errorMessage
-  if (error) {
+  if (error.isError) {
     list = null
     errorMessage = <ErrorMessage />
   }
@@ -55,24 +56,27 @@ ArticleList.defaultProps = {
   getArticlesData: () => {},
   articlesData: [],
   isLoading: true,
-  error: false,
+  error: {},
   totalPages: 0,
   currentPage: 1,
+  isAuthorized: false,
 }
 
 ArticleList.propTypes = {
   getArticlesData: PropTypes.func,
   articlesData: PropTypes.arrayOf(PropTypes.shape()),
   isLoading: PropTypes.bool,
-  error: PropTypes.bool,
+  error: PropTypes.shape(),
   totalPages: PropTypes.number,
   currentPage: PropTypes.number,
+  isAuthorized: PropTypes.bool,
 }
 
 function mapStateToProps(state) {
   return {
     articlesData: state.data.articles,
     isLoading: state.data.isLoading,
+    isAuthorized: state.data.isAuthorized,
     error: state.data.error,
     totalPages: state.data.totalPages,
     currentPage: state.data.currentPage,

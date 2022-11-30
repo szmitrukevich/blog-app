@@ -15,7 +15,7 @@ const LikeBtn = ({ likes, favorited, slug, isAuthorized }) => {
       {like}
     </button>
   )
-  return isAuthorized ? { btn } : <Link to="/sign-in">{btn}</Link>
+  return isAuthorized ? btn : <Link to="/sign-in">{btn}</Link>
 }
 
 export default LikeBtn

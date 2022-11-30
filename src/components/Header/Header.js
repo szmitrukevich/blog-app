@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import { Link, Outlet } from 'react-router-dom'
 import classes from './Header.module.scss'
 import HeaderBtn from '../HeaderBtn'
 
-const Header = ({ isSigned, profile }) => {
+const Header = ({ isAuthorized, profile }) => {
   const btnList = [
     {
       link: '/new-article',
@@ -14,7 +15,7 @@ const Header = ({ isSigned, profile }) => {
     {
       link: '/profile',
       style: 'profile',
-      text: profile.name,
+      text: profile.username,
       avatar: 'https://static.productionready.io/images/smiley-cyrus.jpg',
     },
     {
@@ -45,7 +46,7 @@ const Header = ({ isSigned, profile }) => {
       />
     </Link>
   )
-  const buttons = isSigned
+  const buttons = isAuthorized
     ? btnList.slice(0, 3).map((item) => createBtn(item))
     : btnList.slice(3).map((item) => createBtn(item))
 
@@ -69,14 +70,21 @@ const Header = ({ isSigned, profile }) => {
   )
 }
 
-export default Header
-
 Header.defaultProps = {
-  isSigned: false,
+  isAuthorized: false,
   profile: {},
 }
 
 Header.propTypes = {
-  isSigned: PropTypes.bool,
+  isAuthorized: PropTypes.bool,
   profile: PropTypes.shape(),
 }
+
+function mapStateToProps(state) {
+  return {
+    isAuthorized: state.data.isAuthorized,
+    profile: state.data.currentUser,
+  }
+}
+
+export default connect(mapStateToProps)(Header)
