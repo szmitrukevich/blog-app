@@ -1,59 +1,56 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { connect } from 'react-redux'
+import { useParams } from 'react-router-dom'
+import { getArticle } from '../../redux/store/asyncDataReducer'
 import classes from './SingleArticle.module.scss'
-import AuthorCard from '../AuthorCard'
-import TagList from '../TagList'
-import LikeBtn from '../LkeBtn'
+import Article from '../Article'
+import ErrorMessage from '../ErrorMessage'
 
-const SingleArticle = ({ author, text, created, title, tagList, likes, slug, favorited, isAuthorized }) => {
+const SingleArticle = ({ article, error, getCurrentArticle }) => {
+  const { id } = useParams()
+  const { body, ...props } = article
+  useEffect(() => {
+    getCurrentArticle(id)
+    return () => getCurrentArticle(null)
+  }, [id, error])
+
+  const errorMessage = error && <ErrorMessage />
+
   return (
     <div className={classes.wrapper}>
-      <div className={classes.container}>
-        <div className={classes.title}>
-          <h1>{title}</h1>
-          <LikeBtn
-            slug={slug}
-            favorited={favorited}
-            likes={likes}
-            isAuthorized={isAuthorized}
-          />
-        </div>
-        <TagList tagList={tagList} />
-        <div className={classes.text}>{text}</div>
-      </div>
-
-      <div className={classes.container}>
-        <AuthorCard
-          created={created}
-          author={author}
-        />
-      </div>
+      <Article
+        {...props}
+        full
+      />
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
+      {errorMessage}
     </div>
   )
 }
 
 SingleArticle.defaultProps = {
-  author: {},
-  text: '',
-  created: '',
-  title: '',
-  tagList: [],
-  likes: 0,
-  slug: '',
-  favorited: false,
-  isAuthorized: false,
+  getCurrentArticle: () => {},
+  article: { body: null },
+  error: false,
 }
 
 SingleArticle.propTypes = {
-  author: PropTypes.shape(),
-  text: PropTypes.string,
-  created: PropTypes.string,
-  title: PropTypes.string,
-  tagList: PropTypes.arrayOf(PropTypes.string),
-  likes: PropTypes.number,
-  slug: PropTypes.string,
-  favorited: PropTypes.bool,
-  isAuthorized: PropTypes.bool,
+  getCurrentArticle: PropTypes.func,
+  article: PropTypes.shape(),
+  error: PropTypes.bool,
 }
 
-export default SingleArticle
+function mapStateToProps(state) {
+  return {
+    article: state.data.currentArticle,
+    error: state.data.error,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return { getCurrentArticle: (id) => dispatch(getArticle(id)) }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(SingleArticle)

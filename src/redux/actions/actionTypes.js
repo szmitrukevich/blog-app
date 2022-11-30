@@ -1,6 +1,8 @@
 export const ARTICLES_LOAD = 'ARTICLES_LOAD'
 export const GET_ARTICLES = 'GET_ARTICLES'
+export const GET_ARTICLE = 'GET_ARTICLE'
 export const GET_TOTAL_PAGES = 'GET_TOTAL_PAGES'
+export const GET_CURRENT_PAGE = 'GET_CURRENT_PAGE'
 export const GET_ERROR = 'GET_ERROR'
 export const FILTER_CHANGE = 'FILTER_CHANGE'
 export const CHANGE_SORT = 'CHANGE_SORT'

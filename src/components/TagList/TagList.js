@@ -9,7 +9,7 @@ const TagList = ({ tagList }) => {
       if (item) {
         return (
           <li
-            className={classes.tag}
+            className={classes.item}
             key={uuidv4()}
           >
             {item}
@@ -19,7 +19,7 @@ const TagList = ({ tagList }) => {
       return null
     })
   const list = tagList.length ? createTagList(tagList) : null
-  return <ul className={classes.tagList}>{list}</ul>
+  return <ul className={classes.list}>{list}</ul>
 }
 
 export default TagList

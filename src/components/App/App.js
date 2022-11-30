@@ -1,9 +1,11 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
-import './antd.css'
+import 'antd/dist/antd.min.css'
+import './Pagination.scss'
 import classes from './App.module.scss'
 import ArticleList from '../ArticleList'
 import Header from '../Header/Header'
+import SingleArticle from '../SingleArticle'
 import NotFoundPage from '../NotFoundPage'
 import SignIn from '../SignIn'
 import SignUp from '../SignUp'
@@ -21,11 +23,15 @@ const App = () => (
         element={<ArticleList />}
       />
       <Route
-        path="/signIn"
+        path="/articles/:id"
+        element={<SingleArticle />}
+      />
+      <Route
+        path="/sign-in"
         element={<SignIn />}
       />
       <Route
-        path="/signUp"
+        path="/sign-up"
         element={<SignUp />}
       />
       <Route

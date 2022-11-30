@@ -5,17 +5,16 @@ import classes from './Header.module.scss'
 import HeaderBtn from '../HeaderBtn'
 
 const Header = ({ isSigned, profile }) => {
-  console.log(profile)
   const btnList = [
     {
-      link: '/createArticle',
+      link: '/new-article',
       style: 'createArticle',
       text: 'Create Article',
     },
     {
       link: '/profile',
       style: 'profile',
-      text: 'Name',
+      text: profile.name,
       avatar: 'https://static.productionready.io/images/smiley-cyrus.jpg',
     },
     {
@@ -24,12 +23,12 @@ const Header = ({ isSigned, profile }) => {
       text: 'Log out',
     },
     {
-      link: '/signIn',
+      link: '/sign-in',
       style: 'signIn',
       text: 'Sign In',
     },
     {
-      link: '/signUp',
+      link: '/sign-up',
       style: 'signUp',
       text: 'Sign Up',
     },

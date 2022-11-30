@@ -8,6 +8,18 @@
     grid-template-columns: 66% 33%;
 }
 
+.full {
+    background-color: #FFFFFF;
+    margin-bottom: 26px;
+    display: grid;
+    grid-template-columns: 66% 33%;
+}
+
+
+.container {
+    display: block;
+}
+
 .title {
     display: flex;
     flex-direction: row;
@@ -24,9 +36,11 @@
     }
 }
 
-.text {
+.descr {
     max-height: 45px;
     overflow: hidden;
     text-overflow: ellipsis;
-    cursor: pointer;
+    &_full {
+        color:rgba(0, 0, 0, 0.5)
+    }
 }

@@ -4,7 +4,7 @@ import { format } from 'date-fns'
 import classes from './AuthorCard.module.scss'
 
 const AuthorCard = ({ created, author }) => {
-  const createdDate = format(new Date(created), 'MMMM d, yyyy')
+  const createdDate = created && format(new Date(created), 'MMMM d, yyyy')
   const { username, image } = author
   return (
     <div className={classes.wrapper}>
@@ -29,7 +29,7 @@ const AuthorCard = ({ created, author }) => {
 export default AuthorCard
 
 AuthorCard.defaultProps = {
-  created: null,
+  created: new Date(),
   author: {},
 }
 

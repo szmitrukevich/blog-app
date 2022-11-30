@@ -2,44 +2,64 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
 import PropTypes from 'prop-types'
 import classes from './SignUp.module.scss'
 import SubmitBtn from '../SubmitBtn'
 
 const SignUp = () => {
+  const EMAIL_REGEXP =
+    /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu
+
+  const schema = yup.object({
+    username: yup
+      .string()
+      .required('Please enter username')
+      .min(3, 'Username length should be at least 3 characters')
+      .max(20, 'Username cannot exceed more than 20 characters'),
+    email: yup.string().required('Email is required').matches(EMAIL_REGEXP, 'Is not in correct format'),
+    password: yup
+      .string()
+      .required('Please enter password')
+      .min(6, 'Password length should be at least 6 characters')
+      .max(40, 'Password cannot exceed more than 40 characters'),
+    repPass: yup
+      .string()
+      .required('Please repeat password')
+      .oneOf([yup.ref('password')], 'Passwords do not match'),
+    signUpCheck: yup.bool().oneOf([true], 'You must agree to the processing of data'),
+  })
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm()
+  } = useForm({ resolver: yupResolver(schema) })
+
   const labelList = [
     {
       type: 'text',
       id: 'username',
       title: 'Username',
       placeholder: 'Username',
-      errorMsg: 'Username must be between 3 and 20 characters',
     },
     {
       type: 'email',
       id: 'email',
       title: 'Email address',
       placeholder: 'Email address',
-      errorMsg: 'Enter correct email',
     },
     {
       type: 'password',
       id: 'password',
       title: 'Password',
       placeholder: 'Password',
-      errorMsg: 'Username must be between 6 and 40 characters',
     },
     {
       type: 'password',
       id: 'repPass',
       title: 'Repeat Password',
       placeholder: 'Password',
-      errorMsg: 'Passwords must match',
     },
   ]
   const createLabel = (label) => {
@@ -47,11 +67,12 @@ const SignUp = () => {
       <label
         className={classes.label}
         htmlFor={label.id}
+        key={label.id}
       >
         {label.title}
         <input
           type={label.type}
-          {...register(`${label.id}`, { required: `${label.errorMsg}` })}
+          {...register(`${label.id}`)}
           style={{ borderColor: errors[label.id] ? 'red' : '#D9D9D9' }}
           className={classes.input}
           placeholder={label.placeholder}
@@ -77,15 +98,17 @@ const SignUp = () => {
           <input
             id={signUpCheck}
             type="checkbox"
-            value="signUpCheck"
+            value
+            {...register('signUpCheck')}
             className={classes.checkbox}
           />
           <label htmlFor={signUpCheck}>I agree to the processing of my personal information</label>
+          <p className={classes.warning}>{errors.signUpCheck?.message}</p>
         </span>
         <SubmitBtn text="Create" />
         <span className={classes.text}>
           Already have an account?
-          <Link to="/signIn"> Sign In</Link>
+          <Link to="/sign-in"> Sign In</Link>
         </span>
       </form>
     </div>

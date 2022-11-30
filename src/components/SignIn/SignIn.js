@@ -11,7 +11,8 @@ const SignIn = () => {
     handleSubmit,
     formState: { errors },
   } = useForm()
-
+  const EMAIL_REGEXP =
+    /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu
   const email = 'email'
   const password = 'password'
   return (
@@ -30,7 +31,14 @@ const SignIn = () => {
           Email address
           <input
             type="email"
-            {...register('email', { required: 'Enter correct email' })}
+            {...register('email', {
+              required: 'Enter correct email',
+
+              pattern: {
+                value: EMAIL_REGEXP,
+                message: 'Enter correct email',
+              },
+            })}
             style={{ borderColor: errors.email ? 'red' : '#D9D9D9' }}
             className={classes.input}
             placeholder="Email address"
@@ -57,7 +65,13 @@ const SignIn = () => {
         <SubmitBtn text="Login" />
         <span className={classes.text}>
           Don`t have an account?
-          <Link to="/signUp"> Sign Up</Link>
+          <Link
+            to="/sign-up"
+            className={classes.link}
+          >
+            {' '}
+            Sign Up
+          </Link>
         </span>
       </form>
     </div>

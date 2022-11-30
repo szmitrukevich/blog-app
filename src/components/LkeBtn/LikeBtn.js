@@ -1,11 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import classes from './LikeBtn.module.scss'
 
 const LikeBtn = ({ likes, favorited, slug, isAuthorized }) => {
   const onClick = (x) => console.log(x)
   const like = favorited ? `❤️  ${likes}` : `♡  ${likes}`
-  const btn = isAuthorized ? (
+  const btn = (
     <button
       type="button"
       onClick={() => onClick(slug)}
@@ -13,11 +14,10 @@ const LikeBtn = ({ likes, favorited, slug, isAuthorized }) => {
     >
       {like}
     </button>
-  ) : null
-  return btn
+  )
+  return isAuthorized ? { btn } : <Link to="/sign-in">{btn}</Link>
 }
 
-fgdfg
 export default LikeBtn
 
 LikeBtn.defaultProps = { likes: 0, favorited: false, slug: null, isAuthorized: false }

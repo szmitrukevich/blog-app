@@ -13,29 +13,12 @@ export default class BlogService {
   }
 
   async getArticles(page) {
-    const articles = await this.getResource(`articles?page=${page}`)
+    const articles = await this.getResource(`articles?offset=${(page - 1) * 20}`)
     return articles
   }
 
-  // async sendRequest(id) {
-  //   let res
-  //   try {
-  //     res = await fetch(`${this._apiBase}tickets?searchId=${id}`)
-  //     if (res.status === 500) {
-  //       throw new Error('500')
-  //     }
-  //   } catch (e) {
-  //     if (e.message === '500') {
-  //       res = this.sendRequest(id)
-  //       return res
-  //     }
-  //     throw new Error()
-  //   }
-  //   return res
-  // }
-
-  // async getTickets(id) {
-  //   const res = await this.sendRequest(id)
-  //   return res.json()
-  // }
+  async getArticle(id) {
+    const article = await this.getResource(`articles/${id}`)
+    return article
+  }
 }

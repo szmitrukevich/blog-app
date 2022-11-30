@@ -49,12 +49,19 @@
   color: #BFBFBF;
   text-align: center;
 }
+.link a{
+  color: #1890FF;
+}
 .item {
   margin-top: 21px;
   padding-top: 8px;
   font-size: 14px;
   line-height: 22px;
   border-top: 1px solid #E8E8E8;
+  position: relative;
+  & .warning {
+    top: 50px;
+  }
 }
 .checkbox {
   position: absolute;
