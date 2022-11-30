@@ -1,19 +1,28 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { login } from '../../redux/store/asyncDataReducer'
 import classes from './SignIn.module.scss'
 import SubmitBtn from '../SubmitBtn'
 import ErrorMessage from '../ErrorMessage'
 
-const SignIn = ({ error, getCurrentUser }) => {
+const SignIn = ({ error, getCurrentUser, isAuthorized }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm()
+
+  if (isAuthorized) {
+    return (
+      <Navigate
+        push
+        to="/"
+      />
+    )
+  }
   const EMAIL_REGEXP =
     /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu
   const email = 'email'
@@ -85,12 +94,12 @@ const SignIn = ({ error, getCurrentUser }) => {
   )
 }
 
-SignIn.defaultProps = { error: {}, getCurrentUser: () => null }
+SignIn.defaultProps = { error: {}, getCurrentUser: () => null, isAuthorized: false }
 
-SignIn.propTypes = { error: PropTypes.shape(), getCurrentUser: PropTypes.func }
+SignIn.propTypes = { error: PropTypes.shape(), getCurrentUser: PropTypes.func, isAuthorized: PropTypes.bool }
 
 function mapStateToProps(state) {
-  return { error: state.data.error }
+  return { error: state.data.error, isAuthorized: state.data.isAuthorized }
 }
 
 function mapDispatchToProps(dispatch) {

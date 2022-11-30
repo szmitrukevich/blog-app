@@ -71,6 +71,7 @@ export const login = (info) => (dispatch) => {
       dispatch(getCurrentUser({ ...data }))
       dispatch(getToken(token))
       dispatch(toggleAuthorization(true))
+      dispatch(throwError([false, 200]))
     })
     .catch((e) => {
       dispatch(throwError([true, e.message]))
