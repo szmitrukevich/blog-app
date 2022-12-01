@@ -3,12 +3,13 @@ import { connect } from 'react-redux'
 import { Spin } from 'antd'
 import PropTypes from 'prop-types'
 import { getArticles } from '../../redux/store/asyncDataReducer'
+import { toggleAuthorization } from '../../redux/actions/apiActions'
 import classes from './ArticleList.module.scss'
 import Article from '../Article'
 import ErrorMessage from '../ErrorMessage'
 import Pagination from '../Pagination'
 
-const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPages, currentPage, isAuthorized }) => {
+const ArticleList = ({ articlesData, isLoading, error, getArticlesData, toggleAuth, totalPages, currentPage }) => {
   const createArticle = (item) => (
     <Article
       author={item.author}
@@ -21,7 +22,6 @@ const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPag
       favorited={item.favorited}
       full={false}
       key={item.slug}
-      isAuthorized={isAuthorized}
     />
   )
 
@@ -29,6 +29,7 @@ const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPag
 
   useEffect(() => {
     getArticlesData(currentPage)
+    toggleAuth(localStorage.isAuthorized || false)
   }, [articlesData.length, currentPage, error])
 
   const spinner = isLoading && (
@@ -38,7 +39,7 @@ const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPag
   )
 
   let errorMessage
-  if (error.isError) {
+  if (error.isError && error.status !== '422') {
     list = null
     errorMessage = <ErrorMessage />
   }
@@ -54,29 +55,28 @@ const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPag
 
 ArticleList.defaultProps = {
   getArticlesData: () => {},
+  toggleAuth: () => {},
   articlesData: [],
   isLoading: true,
   error: {},
   totalPages: 0,
   currentPage: 1,
-  isAuthorized: false,
 }
 
 ArticleList.propTypes = {
   getArticlesData: PropTypes.func,
+  toggleAuth: PropTypes.func,
   articlesData: PropTypes.arrayOf(PropTypes.shape()),
   isLoading: PropTypes.bool,
   error: PropTypes.shape(),
   totalPages: PropTypes.number,
   currentPage: PropTypes.number,
-  isAuthorized: PropTypes.bool,
 }
 
 function mapStateToProps(state) {
   return {
     articlesData: state.data.articles,
     isLoading: state.data.isLoading,
-    isAuthorized: state.data.isAuthorized,
     error: state.data.error,
     totalPages: state.data.totalPages,
     currentPage: state.data.currentPage,
@@ -84,7 +84,10 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return { getArticlesData: (page) => dispatch(getArticles(page)) }
+  return {
+    getArticlesData: (page) => dispatch(getArticles(page)),
+    toggleAuth: (isAuth) => dispatch(toggleAuthorization(isAuth)),
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ArticleList)

@@ -1,14 +1,17 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react'
+import { connect } from 'react-redux'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import PropTypes from 'prop-types'
+import { createNewAcc } from '../../redux/store/asyncDataReducer'
 import classes from './SignUp.module.scss'
 import SubmitBtn from '../SubmitBtn'
+import ErrorMessage from '../ErrorMessage'
 
-const SignUp = () => {
+const SignUp = ({ isAuthorized, createAcc, error }) => {
   const EMAIL_REGEXP =
     /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu
 
@@ -63,6 +66,7 @@ const SignUp = () => {
     },
   ]
   const createLabel = (label) => {
+    const labelError = errors[label.id] && <p className={classes.warning}>{errors[label.id]?.message}</p>
     return (
       <label
         className={classes.label}
@@ -78,18 +82,28 @@ const SignUp = () => {
           placeholder={label.placeholder}
           id={label.id}
         />
-        <p className={classes.warning}>{errors[label.id]?.message}</p>
+        {labelError}
       </label>
+    )
+  }
+  if (isAuthorized) {
+    return (
+      <Navigate
+        push
+        to="/"
+      />
     )
   }
   const signUpCheck = 'signUpCheck'
   const labels = labelList.map((item) => createLabel(item))
+  const errorMessage = error.isError && error.status !== '422' && <ErrorMessage />
   return (
     <div className={classes.wrapper}>
+      {errorMessage}
       <form
         className={classes.form}
-        onSubmit={handleSubmit((x) => {
-          console.log(x)
+        onSubmit={handleSubmit((data) => {
+          createAcc({ user: { username: data.username, email: data.email.toLowerCase(), password: data.password } })
         })}
       >
         <h1 className={classes.title}>Create new account</h1>
@@ -115,8 +129,16 @@ const SignUp = () => {
   )
 }
 
-export default SignUp
+SignUp.defaultProps = { error: {}, createAcc: () => null, isAuthorized: false }
 
-SignUp.defaultProps = { onSubmit: () => null }
+SignUp.propTypes = { error: PropTypes.shape(), createAcc: PropTypes.func, isAuthorized: PropTypes.bool }
 
-SignUp.propTypes = { onSubmit: PropTypes.func }
+function mapStateToProps(state) {
+  return { error: state.data.error, isAuthorized: state.data.isAuthorized }
+}
+
+function mapDispatchToProps(dispatch) {
+  return { createAcc: (info) => dispatch(createNewAcc(info)) }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp)

@@ -29,7 +29,7 @@ const AuthorCard = ({ created, author }) => {
 export default AuthorCard
 
 AuthorCard.defaultProps = {
-  created: new Date(),
+  created: null,
   author: {},
 }
 

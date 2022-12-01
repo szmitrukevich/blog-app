@@ -62,6 +62,22 @@ export const getArticle = (id) => (dispatch) => {
   }
   dispatch(getSingleArticle({ body: null }))
 }
+export const createNewAcc = (info) => (dispatch) => {
+  blog
+    .createAccount(info)
+    .then((res) => {
+      const { token, ...data } = res
+      dispatch(getCurrentUser({ ...data }))
+      localStorage.setItem('profile', JSON.stringify(res))
+      localStorage.setItem('isLoginned', 'true')
+      dispatch(getToken(token))
+      dispatch(toggleAuthorization(true))
+      dispatch(throwError([false, 200]))
+    })
+    .catch((e) => {
+      dispatch(throwError([true, e.message]))
+    })
+}
 
 export const login = (info) => (dispatch) => {
   blog
@@ -69,6 +85,8 @@ export const login = (info) => (dispatch) => {
     .then((res) => {
       const { token, ...data } = res
       dispatch(getCurrentUser({ ...data }))
+      localStorage.setItem('profile', JSON.stringify(res))
+      localStorage.setItem('isAuthorized', 'true')
       dispatch(getToken(token))
       dispatch(toggleAuthorization(true))
       dispatch(throwError([false, 200]))

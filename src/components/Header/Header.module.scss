@@ -13,9 +13,12 @@
 .container {
     display: flex;
     flex-direction: row;
+    align-content: space-between;
+    gap: 25px;
 }
 
 .btn {
     background-color: white;
     cursor: pointer;
+    margin-top: 7%;
 }

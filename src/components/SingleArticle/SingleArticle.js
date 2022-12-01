@@ -17,7 +17,7 @@ const SingleArticle = ({ article, error, getCurrentArticle }) => {
     return () => getCurrentArticle(null)
   }, [id, error])
 
-  const errorMessage = error && <ErrorMessage />
+  const errorMessage = error.isError && error.status !== '422' && <ErrorMessage />
 
   return (
     <div className={classes.wrapper}>

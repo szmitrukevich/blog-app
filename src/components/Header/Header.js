@@ -1,11 +1,15 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
 import { Link, Outlet } from 'react-router-dom'
+import { toggleAuthorization } from '../../redux/actions/apiActions'
 import classes from './Header.module.scss'
 import HeaderBtn from '../HeaderBtn'
 
-const Header = ({ isAuthorized, profile }) => {
+const Header = ({ toggleAuth, isAuthorized }) => {
+  useEffect(() => {}, [isAuthorized])
+  const profile = localStorage.profile && JSON.parse(localStorage.profile)
+  console.log(profile)
   const btnList = [
     {
       link: '/new-article',
@@ -15,13 +19,17 @@ const Header = ({ isAuthorized, profile }) => {
     {
       link: '/profile',
       style: 'profile',
-      text: profile.username,
-      avatar: 'https://static.productionready.io/images/smiley-cyrus.jpg',
+      text: profile?.usermane || null,
+      avatar: profile?.avatar || 'https://static.productionready.io/images/smiley-cyrus.jpg',
     },
     {
       link: '',
       style: 'logOut',
       text: 'Log out',
+      onClick: () => {
+        localStorage.clear()
+        return toggleAuth(false)
+      },
     },
     {
       link: '/sign-in',
@@ -43,10 +51,11 @@ const Header = ({ isAuthorized, profile }) => {
       <HeaderBtn
         text={btn.text}
         btnStyle={btn.style}
+        onClick={btn.onClick}
       />
     </Link>
   )
-  const buttons = isAuthorized
+  const buttons = localStorage.isAuthorized
     ? btnList.slice(0, 3).map((item) => createBtn(item))
     : btnList.slice(3).map((item) => createBtn(item))
 
@@ -71,20 +80,21 @@ const Header = ({ isAuthorized, profile }) => {
 }
 
 Header.defaultProps = {
-  isAuthorized: false,
-  profile: {},
+  toggleAuth: () => {},
+  isAuthorized: 'false',
 }
 
 Header.propTypes = {
-  isAuthorized: PropTypes.bool,
-  profile: PropTypes.shape(),
+  toggleAuth: PropTypes.func,
+  isAuthorized: PropTypes.string,
 }
 
 function mapStateToProps(state) {
-  return {
-    isAuthorized: state.data.isAuthorized,
-    profile: state.data.currentUser,
-  }
+  return { isAuthorized: state.data.isAuthorized }
 }
 
-export default connect(mapStateToProps)(Header)
+function mapDispatchToProps(dispatch) {
+  return { toggleAuth: (isLoginned) => dispatch(toggleAuthorization(isLoginned)) }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header)

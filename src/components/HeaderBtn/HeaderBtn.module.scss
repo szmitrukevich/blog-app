@@ -1,7 +1,7 @@
 .signIn {
     background-color: white;
-    margin-right: 25px;
     cursor: pointer;
+    height: 100%;
 }
 
 .signUp {
@@ -12,4 +12,39 @@
     border: 1px solid #52C41A;
     border-radius: 5px;
     cursor: pointer;
+    height: 100%;
+}
+
+.createArticle {
+    background-color: white;
+    color: #52C41A;
+    padding: 6px auto 10px;
+    border: 1px solid #52C41A;
+    border-radius: 5px;
+    margin-top: 7%;
+    cursor: pointer;
+}
+
+.logOut {
+    background-color: white;
+    cursor: pointer;
+    height: 100%;
+    border: 1px solid black;
+    color: black;
+    border-radius: 5px;
+    width: 110px;
+}
+
+.profile {
+    background-color: white;
+    color: black;
+    cursor: pointer;
+}
+
+.img {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    margin-left: 12px;
+
 }

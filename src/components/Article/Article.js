@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import classes from './Article.module.scss'
@@ -18,6 +18,7 @@ const Article = ({
   isAuthorized,
   full,
 }) => {
+  useEffect(() => {}, [isAuthorized])
   const link = full ? (
     <h1>{title}</h1>
   ) : (
