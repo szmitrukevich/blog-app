@@ -26,6 +26,20 @@ export default class BlogService {
     return res.json()
   }
 
+  async putResource(url, body, token) {
+    const res = await fetch(`${this._apiBase}${url}`, {
+      method: 'PUT',
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(body),
+    })
+
+    if (!res.ok) {
+      throw new Error(res.status)
+    }
+
+    return res.json()
+  }
+
   // async postxResource(url, body, token) {
   //   const res = await fetch(`${this._apiBase}${url}`, {
   //     method: 'POST',
@@ -51,14 +65,29 @@ export default class BlogService {
   }
 
   async createAccount(body) {
-    const newAccount = await this.postResource('users', body)
-    return newAccount.user
+    let newAccount
+    try {
+      newAccount = await this.postResource('users', body)
+      return newAccount.user
+    } catch (e) {
+      throw new Error(e.message)
+    }
   }
 
   async login(body) {
     let account
     try {
       account = await this.postResource('users/login', body)
+      return account.user
+    } catch (e) {
+      throw new Error(e.message)
+    }
+  }
+
+  async updateProfile(body, token) {
+    let account
+    try {
+      account = await this.putResource('user', body, token)
       return account.user
     } catch (e) {
       throw new Error(e.message)

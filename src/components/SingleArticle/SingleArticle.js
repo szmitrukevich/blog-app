@@ -34,13 +34,13 @@ const SingleArticle = ({ article, error, getCurrentArticle }) => {
 SingleArticle.defaultProps = {
   getCurrentArticle: () => {},
   article: { body: null },
-  error: false,
+  error: {},
 }
 
 SingleArticle.propTypes = {
   getCurrentArticle: PropTypes.func,
   article: PropTypes.shape(),
-  error: PropTypes.bool,
+  error: PropTypes.shape(),
 }
 
 function mapStateToProps(state) {

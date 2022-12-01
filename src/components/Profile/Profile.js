@@ -1,20 +1,21 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
-import React from 'react'
+import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { useForm } from 'react-hook-form'
-import { Link, Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import PropTypes from 'prop-types'
-import { createNewAcc } from '../../redux/store/asyncDataReducer'
-import classes from './SignUp.module.scss'
+import { updateProfile } from '../../redux/store/asyncDataReducer'
+import classes from './Profile.module.scss'
 import SubmitBtn from '../SubmitBtn'
 import ErrorMessage from '../ErrorMessage'
 
-const SignUp = ({ isAuthorized, createAcc, error }) => {
+const Profile = ({ updateUserInfo, error }) => {
+  const [saved, setSaved] = useState(false)
+  const profile = localStorage.profile && JSON.parse(localStorage.profile)
   const EMAIL_REGEXP =
     /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu
-
+  const URL_REGEXP = /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi
   const schema = yup.object({
     username: yup
       .string()
@@ -24,14 +25,9 @@ const SignUp = ({ isAuthorized, createAcc, error }) => {
     email: yup.string().required('Email is required').matches(EMAIL_REGEXP, 'Is not in correct format'),
     password: yup
       .string()
-      .required('Please enter password')
       .min(6, 'Password length should be at least 6 characters')
       .max(40, 'Password cannot exceed more than 40 characters'),
-    repPass: yup
-      .string()
-      .required('Please repeat password')
-      .oneOf([yup.ref('password')], 'Passwords do not match'),
-    signUpCheck: yup.bool().oneOf([true], 'You must agree to the processing of data'),
+    avatar: yup.string().matches(URL_REGEXP, 'Is not in correct format'),
   })
   const {
     register,
@@ -44,25 +40,25 @@ const SignUp = ({ isAuthorized, createAcc, error }) => {
       type: 'text',
       id: 'username',
       title: 'Username',
-      placeholder: 'Username',
+      placeholder: 'New username',
     },
     {
       type: 'email',
       id: 'email',
       title: 'Email address',
-      placeholder: 'Email address',
+      placeholder: 'New email address',
     },
     {
       type: 'password',
       id: 'password',
       title: 'Password',
-      placeholder: 'Password',
+      placeholder: 'New password',
     },
     {
-      type: 'password',
-      id: 'repPass',
-      title: 'Repeat Password',
-      placeholder: 'Password',
+      type: 'url',
+      id: 'avatar',
+      title: 'Avatar',
+      placeholder: 'Avatar image',
     },
   ]
   const createLabel = (label) => {
@@ -86,7 +82,7 @@ const SignUp = ({ isAuthorized, createAcc, error }) => {
       </label>
     )
   }
-  if (isAuthorized) {
+  if (saved) {
     return (
       <Navigate
         push
@@ -94,53 +90,44 @@ const SignUp = ({ isAuthorized, createAcc, error }) => {
       />
     )
   }
-  const signUpCheck = 'signUpCheck'
   const labels = labelList.map((item) => createLabel(item))
   const errorMessage = error.isError && error.status !== '422' && <ErrorMessage />
-  const cantCreateNewUser = error.status === '422' && <p className={classes.warning}>User already exists</p>
+  const cantCreateNewUser = error.status === '422' && <p className={classes.warning}>Email already taken</p>
   return (
     <div className={classes.wrapper}>
       {errorMessage}
       <form
         className={classes.form}
         onSubmit={handleSubmit((data) => {
-          createAcc({ user: { username: data.username, email: data.email.toLowerCase(), password: data.password } })
+          console.log(
+            {
+              user: {
+                username: data.username,
+                email: data.email.toLowerCase(),
+                password: data.password,
+                image: data.image,
+              },
+            },
+            profile.token
+          )
+          if (!error.isError) setSaved(true)
         })}
       >
-        <h1 className={classes.title}>Create new account</h1>
+        <h1 className={classes.title}>Edit Profile</h1>
         {labels}
-        <span className={classes.item}>
-          <input
-            id={signUpCheck}
-            type="checkbox"
-            value
-            {...register('signUpCheck')}
-            className={classes.checkbox}
-          />
-          <label htmlFor={signUpCheck}>I agree to the processing of my personal information</label>
-          <p className={classes.warning}>{errors.signUpCheck?.message}</p>
-        </span>
-        <SubmitBtn text="Create" />
-        <span className={classes.text}>
-          {cantCreateNewUser}
-          Already have an account?
-          <Link to="/sign-in"> Sign In</Link>
-        </span>
+        <SubmitBtn text="Save" />
+        <span className={classes.text}>{cantCreateNewUser}</span>
       </form>
     </div>
   )
 }
 
-SignUp.defaultProps = { error: {}, createAcc: () => null, isAuthorized: false }
+Profile.defaultProps = { error: {}, updateUserInfo: () => null }
 
-SignUp.propTypes = { error: PropTypes.shape(), createAcc: PropTypes.func, isAuthorized: PropTypes.bool }
-
-function mapStateToProps(state) {
-  return { error: state.data.error, isAuthorized: state.data.isAuthorized }
-}
+Profile.propTypes = { error: PropTypes.shape(), updateUserInfo: PropTypes.func }
 
 function mapDispatchToProps(dispatch) {
-  return { createAcc: (info) => dispatch(createNewAcc(info)) }
+  return { updateUserInfo: (info) => dispatch(updateProfile(info)) }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignUp)
+export default connect(null, mapDispatchToProps)(Profile)

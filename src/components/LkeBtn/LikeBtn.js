@@ -25,7 +25,7 @@ LikeBtn.propTypes = {
   likes: PropTypes.number,
   favorited: PropTypes.bool,
   slug: PropTypes.string,
-  isAuthorized: PropTypes.string,
+  isAuthorized: PropTypes.bool,
 }
 function mapStateToProps(state) {
   return { isAuthorized: state.data.isAuthorized }

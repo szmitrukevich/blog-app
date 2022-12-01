@@ -29,7 +29,7 @@ const ArticleList = ({ articlesData, isLoading, error, getArticlesData, toggleAu
 
   useEffect(() => {
     getArticlesData(currentPage)
-    toggleAuth(localStorage.isAuthorized || false)
+    toggleAuth(Boolean(localStorage.isAuthorized) || false)
   }, [articlesData.length, currentPage, error])
 
   const spinner = isLoading && (

@@ -9,6 +9,7 @@ import SingleArticle from '../SingleArticle'
 import NotFoundPage from '../NotFoundPage'
 import SignIn from '../SignIn'
 import SignUp from '../SignUp'
+import Profile from '../Profile/Profile'
 
 const App = () => (
   <div className={classes.app}>
@@ -33,6 +34,10 @@ const App = () => (
       <Route
         path="/sign-up"
         element={<SignUp />}
+      />
+      <Route
+        path="/profile"
+        element={<Profile />}
       />
       <Route
         path="*"

@@ -3,8 +3,6 @@ import {
   toggleIsLoading,
   updateArticleList,
   getSingleArticle,
-  getToken,
-  getCurrentUser,
   throwError,
   getTotalPages,
   toggleAuthorization,
@@ -14,10 +12,8 @@ import {
   GET_ARTICLES,
   GET_ARTICLE,
   GET_CURRENT_PAGE,
-  GET_TOKEN,
   GET_ERROR,
   GET_TOTAL_PAGES,
-  GET_USER_INFO,
   TOGGLE_AUTHORIZATION,
 } from '../actions/actionTypes'
 
@@ -27,8 +23,6 @@ const initialState = {
   totalPages: 0,
   currentPage: 1,
   articles: [],
-  token: null,
-  currentUser: {},
   isAuthorized: false,
   currentArticle: { body: null },
   error: { isError: false, status: 200 },
@@ -66,11 +60,8 @@ export const createNewAcc = (info) => (dispatch) => {
   blog
     .createAccount(info)
     .then((res) => {
-      const { token, ...data } = res
-      dispatch(getCurrentUser({ ...data }))
       localStorage.setItem('profile', JSON.stringify(res))
-      localStorage.setItem('isLoginned', 'true')
-      dispatch(getToken(token))
+      localStorage.setItem('isAuthorized', 'true')
       dispatch(toggleAuthorization(true))
       dispatch(throwError([false, 200]))
     })
@@ -83,11 +74,21 @@ export const login = (info) => (dispatch) => {
   blog
     .login(info)
     .then((res) => {
-      const { token, ...data } = res
-      dispatch(getCurrentUser({ ...data }))
       localStorage.setItem('profile', JSON.stringify(res))
       localStorage.setItem('isAuthorized', 'true')
-      dispatch(getToken(token))
+      dispatch(toggleAuthorization(true))
+      dispatch(throwError([false, 200]))
+    })
+    .catch((e) => {
+      dispatch(throwError([true, e.message]))
+    })
+}
+
+export const updateProfile = (info, token) => (dispatch) => {
+  blog
+    .updateProfile(info, token)
+    .then((res) => {
+      localStorage.setItem('profile', JSON.stringify(res))
       dispatch(toggleAuthorization(true))
       dispatch(throwError([false, 200]))
     })
@@ -106,12 +107,8 @@ const asyncDataReducer = (state = initialState, { type, payload } = {}) => {
       return { ...state, currentArticle: payload }
     case GET_TOTAL_PAGES:
       return { ...state, totalPages: payload }
-    case GET_USER_INFO:
-      return { ...state, currentUser: { ...payload } }
     case TOGGLE_AUTHORIZATION:
       return { ...state, isAuthorized: payload }
-    case GET_TOKEN:
-      return { ...state, token: payload }
     case GET_CURRENT_PAGE:
       return { ...state, currentPage: payload }
     case GET_ERROR:

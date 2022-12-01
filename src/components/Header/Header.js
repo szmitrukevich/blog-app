@@ -7,9 +7,8 @@ import classes from './Header.module.scss'
 import HeaderBtn from '../HeaderBtn'
 
 const Header = ({ toggleAuth, isAuthorized }) => {
-  useEffect(() => {}, [isAuthorized])
   const profile = localStorage.profile && JSON.parse(localStorage.profile)
-  console.log(profile)
+  useEffect(() => {}, [isAuthorized])
   const btnList = [
     {
       link: '/new-article',
@@ -19,7 +18,7 @@ const Header = ({ toggleAuth, isAuthorized }) => {
     {
       link: '/profile',
       style: 'profile',
-      text: profile?.usermane || null,
+      text: profile?.username || null,
       avatar: profile?.avatar || 'https://static.productionready.io/images/smiley-cyrus.jpg',
     },
     {
@@ -86,7 +85,7 @@ Header.defaultProps = {
 
 Header.propTypes = {
   toggleAuth: PropTypes.func,
-  isAuthorized: PropTypes.string,
+  isAuthorized: PropTypes.bool,
 }
 
 function mapStateToProps(state) {
