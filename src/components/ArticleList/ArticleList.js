@@ -3,13 +3,12 @@ import { connect } from 'react-redux'
 import { Spin } from 'antd'
 import PropTypes from 'prop-types'
 import { getArticles } from '../../redux/store/asyncDataReducer'
-import { toggleAuthorization } from '../../redux/actions/apiActions'
 import classes from './ArticleList.module.scss'
 import Article from '../Article'
 import ErrorMessage from '../ErrorMessage'
 import Pagination from '../Pagination'
 
-const ArticleList = ({ articlesData, isLoading, error, getArticlesData, toggleAuth, totalPages, currentPage }) => {
+const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPages, currentPage }) => {
   const createArticle = (item) => (
     <Article
       author={item.author}
@@ -29,7 +28,6 @@ const ArticleList = ({ articlesData, isLoading, error, getArticlesData, toggleAu
 
   useEffect(() => {
     getArticlesData(currentPage)
-    toggleAuth(Boolean(localStorage.isAuthorized) || false)
   }, [articlesData.length, currentPage, error])
 
   const spinner = isLoading && (
@@ -55,7 +53,6 @@ const ArticleList = ({ articlesData, isLoading, error, getArticlesData, toggleAu
 
 ArticleList.defaultProps = {
   getArticlesData: () => {},
-  toggleAuth: () => {},
   articlesData: [],
   isLoading: true,
   error: {},
@@ -65,7 +62,6 @@ ArticleList.defaultProps = {
 
 ArticleList.propTypes = {
   getArticlesData: PropTypes.func,
-  toggleAuth: PropTypes.func,
   articlesData: PropTypes.arrayOf(PropTypes.shape()),
   isLoading: PropTypes.bool,
   error: PropTypes.shape(),
@@ -84,10 +80,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    getArticlesData: (page) => dispatch(getArticles(page)),
-    toggleAuth: (isAuth) => dispatch(toggleAuthorization(isAuth)),
-  }
+  return { getArticlesData: (page) => dispatch(getArticles(page)) }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ArticleList)

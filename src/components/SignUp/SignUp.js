@@ -10,15 +10,14 @@ import { createNewAcc } from '../../redux/store/asyncDataReducer'
 import classes from './SignUp.module.scss'
 import SubmitBtn from '../SubmitBtn'
 import ErrorMessage from '../ErrorMessage'
+import { EMAIL_REGEXP, USERNAME_REGEXP } from '../../assets/constants/regexpConstants'
 
 const SignUp = ({ isAuthorized, createAcc, error }) => {
-  const EMAIL_REGEXP =
-    /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu
-
-  const schema = yup.object({
+  const schema = yup.object().shape({
     username: yup
       .string()
       .required('Please enter username')
+      .matches(USERNAME_REGEXP, 'Only Latin characters')
       .min(3, 'Username length should be at least 3 characters')
       .max(20, 'Username cannot exceed more than 20 characters'),
     email: yup.string().required('Email is required').matches(EMAIL_REGEXP, 'Is not in correct format'),

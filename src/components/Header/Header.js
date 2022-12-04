@@ -1,13 +1,19 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Link, Outlet } from 'react-router-dom'
 import { toggleAuthorization } from '../../redux/actions/apiActions'
+import { login } from '../../redux/store/asyncDataReducer'
 import classes from './Header.module.scss'
 import HeaderBtn from '../HeaderBtn'
 
-const Header = ({ toggleAuth, isAuthorized }) => {
-  const profile = localStorage.profile && JSON.parse(localStorage.profile)
+const Header = ({ toggleAuth, isAuthorized, user, logIn }) => {
+  const [calls, setCalls] = useState(1)
+  if (localStorage.getItem('isAuthorized') && calls < 2) {
+    logIn({ user: { email: localStorage.getItem('email'), password: localStorage.getItem('password') } })
+    setCalls(2)
+  }
+  const { username, image } = user
   useEffect(() => {}, [isAuthorized])
   const btnList = [
     {
@@ -18,8 +24,8 @@ const Header = ({ toggleAuth, isAuthorized }) => {
     {
       link: '/profile',
       style: 'profile',
-      text: profile?.username || null,
-      avatar: profile?.avatar || 'https://static.productionready.io/images/smiley-cyrus.jpg',
+      text: username || null,
+      avatar: image || 'https://static.productionready.io/images/smiley-cyrus.jpg',
     },
     {
       link: '',
@@ -81,19 +87,26 @@ const Header = ({ toggleAuth, isAuthorized }) => {
 Header.defaultProps = {
   toggleAuth: () => {},
   isAuthorized: 'false',
+  user: {},
+  logIn: () => {},
 }
 
 Header.propTypes = {
   toggleAuth: PropTypes.func,
   isAuthorized: PropTypes.bool,
+  user: PropTypes.shape(),
+  logIn: PropTypes.func,
 }
 
 function mapStateToProps(state) {
-  return { isAuthorized: state.data.isAuthorized }
+  return { isAuthorized: state.data.isAuthorized, user: state.data.currentUser }
 }
 
 function mapDispatchToProps(dispatch) {
-  return { toggleAuth: (isLoginned) => dispatch(toggleAuthorization(isLoginned)) }
+  return {
+    toggleAuth: (isLoginned) => dispatch(toggleAuthorization(isLoginned)),
+    logIn: (info) => dispatch(login(info)),
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header)

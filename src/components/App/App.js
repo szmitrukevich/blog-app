@@ -10,6 +10,7 @@ import NotFoundPage from '../NotFoundPage'
 import SignIn from '../SignIn'
 import SignUp from '../SignUp'
 import Profile from '../Profile/Profile'
+import NewArticle from '../NewArticle'
 
 const App = () => (
   <div className={classes.app}>
@@ -38,6 +39,10 @@ const App = () => (
       <Route
         path="/profile"
         element={<Profile />}
+      />
+      <Route
+        path="/new-article"
+        element={<NewArticle />}
       />
       <Route
         path="*"

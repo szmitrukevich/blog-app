@@ -2,14 +2,14 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classes from './HeaderBtn.module.scss'
 
-const HeaderBtn = ({ text, btnStyle, onClick }) => {
+const HeaderBtn = ({ text, btnStyle, onClick, avatar }) => {
   const img = btnStyle === 'profile' && (
     <img
-      src="https://static.productionready.io/images/smiley-cyrus.jpg"
+      src={avatar}
       className={classes.img}
       onError={({ currentTarget }) => {
         currentTarget.onerror = null
-        currentTarget.src = 'https://static.productionready.io/images/smiley-cyrus.jpg'
+        currentTarget.src = 'https://i.ibb.co/3hcBXPz/a42bcb5c-9140-4967-bd3d-385842c4e42d.jpg'
       }}
       alt="avatar"
     />
@@ -28,6 +28,11 @@ const HeaderBtn = ({ text, btnStyle, onClick }) => {
 
 export default HeaderBtn
 
-HeaderBtn.defaultProps = { text: '', btnStyle: '', onClick: () => null }
+HeaderBtn.defaultProps = { text: '', btnStyle: '', onClick: () => null, avatar: '' }
 
-HeaderBtn.propTypes = { text: PropTypes.string, btnStyle: PropTypes.string, onClick: PropTypes.func }
+HeaderBtn.propTypes = {
+  text: PropTypes.string,
+  btnStyle: PropTypes.string,
+  onClick: PropTypes.func,
+  avatar: PropTypes.string,
+}

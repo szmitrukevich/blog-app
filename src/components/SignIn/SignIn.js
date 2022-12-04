@@ -11,11 +11,8 @@ import SubmitBtn from '../SubmitBtn'
 import ErrorMessage from '../ErrorMessage'
 
 const SignIn = ({ error, logIn, isAuthorized }) => {
-  const EMAIL_REGEXP =
-    /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu
-
-  const schema = yup.object({
-    email: yup.string().required('Email is required').matches(EMAIL_REGEXP, 'Is not in correct format'),
+  const schema = yup.object().shape({
+    email: yup.string().required('Email is required').email('Is not in correct format'),
     password: yup
       .string()
       .required('Please enter password')

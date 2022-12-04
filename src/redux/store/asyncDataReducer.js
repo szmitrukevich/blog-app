@@ -5,6 +5,8 @@ import {
   getSingleArticle,
   throwError,
   getTotalPages,
+  getToken,
+  getCurrentUser,
   toggleAuthorization,
 } from '../actions/apiActions'
 import {
@@ -14,15 +16,28 @@ import {
   GET_CURRENT_PAGE,
   GET_ERROR,
   GET_TOTAL_PAGES,
+  GET_USER_INFO,
+  GET_TOKEN,
   TOGGLE_AUTHORIZATION,
 } from '../actions/actionTypes'
 
 const blog = new BlogService()
+blog
+  .createAccount({
+    user: {
+      username: 'ololosh',
+      email: 'zmufgh1234@gmail.com',
+      password: '123456',
+    },
+  })
+  .then((res) => console.log(res))
 const initialState = {
   isLoading: true,
   totalPages: 0,
   currentPage: 1,
   articles: [],
+  token: null,
+  currentUser: {},
   isAuthorized: false,
   currentArticle: { body: null },
   error: { isError: false, status: 200 },
@@ -56,12 +71,24 @@ export const getArticle = (id) => (dispatch) => {
   }
   dispatch(getSingleArticle({ body: null }))
 }
+
+const setLocalStorageData = (userInfo) => {
+  const keys = Object.keys(userInfo)
+  keys.forEach((key) => {
+    localStorage.setItem(key, userInfo[key])
+  })
+  localStorage.setItem('isAuthorized', 'true')
+}
+
 export const createNewAcc = (info) => (dispatch) => {
   blog
     .createAccount(info)
     .then((res) => {
-      localStorage.setItem('profile', JSON.stringify(res))
-      localStorage.setItem('isAuthorized', 'true')
+      const { user } = info
+      setLocalStorageData(user)
+      const { token, ...data } = res
+      dispatch(getCurrentUser({ ...data }))
+      dispatch(getToken(token))
       dispatch(toggleAuthorization(true))
       dispatch(throwError([false, 200]))
     })
@@ -69,13 +96,15 @@ export const createNewAcc = (info) => (dispatch) => {
       dispatch(throwError([true, e.message]))
     })
 }
-
 export const login = (info) => (dispatch) => {
   blog
     .login(info)
     .then((res) => {
-      localStorage.setItem('profile', JSON.stringify(res))
-      localStorage.setItem('isAuthorized', 'true')
+      const { user } = info
+      setLocalStorageData(user)
+      const { token, ...data } = res
+      dispatch(getCurrentUser({ ...data }))
+      dispatch(getToken(token))
       dispatch(toggleAuthorization(true))
       dispatch(throwError([false, 200]))
     })
@@ -84,14 +113,25 @@ export const login = (info) => (dispatch) => {
     })
 }
 
-export const updateProfile = (info, token) => (dispatch) => {
+export const updateProfile = (info, currToken) => (dispatch) => {
   blog
-    .updateProfile(info, token)
+    .updateProfile(info, currToken)
     .then((res) => {
-      localStorage.setItem('profile', JSON.stringify(res))
-      dispatch(toggleAuthorization(true))
+      const { user } = info
+      setLocalStorageData(user)
+      const { token, ...data } = res
+      dispatch(getCurrentUser({ ...data }))
       dispatch(throwError([false, 200]))
     })
+    .catch((e) => {
+      dispatch(throwError([true, e.message]))
+    })
+}
+
+export const createArticle = (article, currToken) => (dispatch) => {
+  blog
+    .createArticle(article, currToken)
+    .then(() => dispatch(throwError([false, 200])))
     .catch((e) => {
       dispatch(throwError([true, e.message]))
     })
@@ -107,6 +147,10 @@ const asyncDataReducer = (state = initialState, { type, payload } = {}) => {
       return { ...state, currentArticle: payload }
     case GET_TOTAL_PAGES:
       return { ...state, totalPages: payload }
+    case GET_USER_INFO:
+      return { ...state, currentUser: { ...payload } }
+    case GET_TOKEN:
+      return { ...state, token: payload }
     case TOGGLE_AUTHORIZATION:
       return { ...state, isAuthorized: payload }
     case GET_CURRENT_PAGE:

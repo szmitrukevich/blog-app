@@ -13,6 +13,7 @@ export default class BlogService {
   }
 
   async postResource(url, body) {
+    console.log('put', body)
     const res = await fetch(`${this._apiBase}${url}`, {
       method: 'POST',
       headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
@@ -27,6 +28,7 @@ export default class BlogService {
   }
 
   async putResource(url, body, token) {
+    console.log('put', body)
     const res = await fetch(`${this._apiBase}${url}`, {
       method: 'PUT',
       headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -40,20 +42,6 @@ export default class BlogService {
     return res.json()
   }
 
-  // async postxResource(url, body, token) {
-  //   const res = await fetch(`${this._apiBase}${url}`, {
-  //     method: 'POST',
-  //     headers: { Accept: 'application/json', 'Content-Type': 'application/json', authorization: `Bearer ${token}` },
-  //     body: JSON.stringify(body),
-  //   })
-
-  //   if (!res.ok) {
-  //     throw new Error(`Could not fetch ${url}, received ${res.status}`)
-  //   }
-
-  //   return res.json()
-  // }
-
   async getArticles(page) {
     const articles = await this.getResource(`articles?offset=${(page - 1) * 20}`)
     return articles
@@ -66,6 +54,7 @@ export default class BlogService {
 
   async createAccount(body) {
     let newAccount
+    console.log('create', body)
     try {
       newAccount = await this.postResource('users', body)
       return newAccount.user
@@ -92,5 +81,10 @@ export default class BlogService {
     } catch (e) {
       throw new Error(e.message)
     }
+  }
+
+  async createArticle(body, token) {
+    const article = await this.putResource('articles', body, token)
+    return article
   }
 }
