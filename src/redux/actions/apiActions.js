@@ -8,6 +8,7 @@ import {
   GET_TOKEN,
   GET_USER_INFO,
   TOGGLE_AUTHORIZATION,
+  CHANGED,
 } from './actionTypes'
 
 export const toggleIsLoading = (isLoading) => ({ type: ARTICLES_LOAD, payload: isLoading })
@@ -19,3 +20,4 @@ export const toggleAuthorization = (isLoggined) => ({ type: TOGGLE_AUTHORIZATION
 export const getTotalPages = (total) => ({ type: GET_TOTAL_PAGES, payload: total })
 export const getCurrentPage = (page) => ({ type: GET_CURRENT_PAGE, payload: page })
 export const throwError = (error) => ({ type: GET_ERROR, payload: error })
+export const setChanged = (succChanged) => ({ type: CHANGED, payload: succChanged })

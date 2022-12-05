@@ -70,9 +70,9 @@ const SignIn = ({ error, logIn, isAuthorized }) => {
       />
     )
   }
-  const noLogin = error.status === '422' && <p className={classes.warning}>Wrong login or password</p>
+  const noLogin = error['email or password'] && <p className={classes.warning}>Wrong login or password</p>
 
-  const errorMessage = error.isError && error.status !== '422' && <ErrorMessage />
+  const errorMessage = error.message && <ErrorMessage />
   return (
     <div className={classes.wrapper}>
       {errorMessage}

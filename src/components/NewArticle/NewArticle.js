@@ -10,7 +10,7 @@ import classes from './NewArticle.module.scss'
 import ErrorMessage from '../ErrorMessage'
 import SubmitBtn from '../SubmitBtn'
 
-const NewArticle = ({ createNewArticle, error, token, succChanged }) => {
+const NewArticle = ({ createNewArticle, error, token, changed }) => {
   const schema = yup.object().shape({
     title: yup.string().required('Please enter title'),
     description: yup.string().required('Please enter description'),
@@ -63,7 +63,7 @@ const NewArticle = ({ createNewArticle, error, token, succChanged }) => {
       </label>
     )
   }
-  if (succChanged) {
+  if (changed) {
     return (
       <Navigate
         push
@@ -79,7 +79,8 @@ const NewArticle = ({ createNewArticle, error, token, succChanged }) => {
       <form
         className={classes.form}
         onSubmit={handleSubmit((data) => {
-          createNewArticle({ article: { data } }, token)
+          console.log(data)
+          // createNewArticle({ article: { data } }, token)
         })}
       >
         <h1 className={classes.title}>Create new article</h1>
@@ -90,17 +91,17 @@ const NewArticle = ({ createNewArticle, error, token, succChanged }) => {
   )
 }
 
-NewArticle.defaultProps = { error: {}, createNewArticle: () => null, token: '', succChanged: false }
+NewArticle.defaultProps = { error: {}, createNewArticle: () => null, token: '', changed: false }
 
 NewArticle.propTypes = {
   error: PropTypes.shape(),
   createNewArticle: PropTypes.func,
   token: PropTypes.string,
-  succChanged: PropTypes.bool,
+  changed: PropTypes.bool,
 }
 
 function mapStateToProps(state) {
-  return { token: state.data.token, succChanged: state.data.succChanged }
+  return { token: state.data.token, changed: state.data.succChanged }
 }
 
 function mapDispatchToProps(dispatch) {

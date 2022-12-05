@@ -37,7 +37,7 @@ const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPag
   )
 
   let errorMessage
-  if (error.isError && error.status !== '422') {
+  if (error.message) {
     list = null
     errorMessage = <ErrorMessage />
   }

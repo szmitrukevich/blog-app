@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { Navigate } from 'react-router-dom'
@@ -11,8 +11,7 @@ import SubmitBtn from '../SubmitBtn'
 import ErrorMessage from '../ErrorMessage'
 import { USERNAME_REGEXP } from '../../assets/constants/regexpConstants'
 
-const Profile = ({ updateUserInfo, error, token }) => {
-  const [saved, setSaved] = useState(false)
+const Profile = ({ updateUserInfo, error, token, changed }) => {
   const schema = yup.object().shape(
     {
       username: yup
@@ -90,7 +89,7 @@ const Profile = ({ updateUserInfo, error, token }) => {
       </label>
     )
   }
-  if (saved) {
+  if (changed) {
     return (
       <Navigate
         push
@@ -99,8 +98,9 @@ const Profile = ({ updateUserInfo, error, token }) => {
     )
   }
   const labels = labelList.map((item) => createLabel(item))
-  const errorMessage = error.isError && error.status !== '422' && <ErrorMessage />
-  const cantCreateNewUser = error.status === '422' && <p className={classes.warning}>Email already taken</p>
+  const errorMessage = error.message && <ErrorMessage />
+  const usernameTaken = error.username && <p className={classes.warning}>Username already taken</p>
+  const emailTaken = error.email && <p className={classes.warning}>Email already taken</p>
   const setUpdatedLabels = (obj) => {
     const updatedLabels = {}
     // eslint-disable-next-line no-restricted-syntax
@@ -121,24 +121,31 @@ const Profile = ({ updateUserInfo, error, token }) => {
         className={classes.form}
         onSubmit={handleSubmit((data) => {
           updateUserInfo(setUpdatedLabels(data), token)
-          if (!error.isError) setSaved(true)
         })}
       >
         <h1 className={classes.title}>Edit Profile</h1>
         {labels}
         <SubmitBtn text="Save" />
-        <span className={classes.text}>{cantCreateNewUser}</span>
+        <span className={classes.text}>
+          {usernameTaken}
+          {emailTaken}
+        </span>
       </form>
     </div>
   )
 }
 
-Profile.defaultProps = { error: {}, updateUserInfo: () => null, token: '' }
+Profile.defaultProps = { error: {}, updateUserInfo: () => null, token: '', changed: false }
 
-Profile.propTypes = { error: PropTypes.shape(), updateUserInfo: PropTypes.func, token: PropTypes.string }
+Profile.propTypes = {
+  error: PropTypes.shape(),
+  updateUserInfo: PropTypes.func,
+  token: PropTypes.string,
+  changed: PropTypes.bool,
+}
 
 function mapStateToProps(state) {
-  return { token: state.data.token }
+  return { token: state.data.token, changed: state.data.succChanged }
 }
 
 function mapDispatchToProps(dispatch) {

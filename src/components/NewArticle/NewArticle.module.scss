@@ -28,6 +28,7 @@
     position: relative;
     &:nth-child(4) {
         & .input {
+            vertical-align: top;
             height: 168px;
             &::placeholder {
                 transform: translateY(-65px)

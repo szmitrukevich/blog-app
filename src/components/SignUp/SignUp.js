@@ -95,8 +95,9 @@ const SignUp = ({ isAuthorized, createAcc, error }) => {
   }
   const signUpCheck = 'signUpCheck'
   const labels = labelList.map((item) => createLabel(item))
-  const errorMessage = error.isError && error.status !== '422' && <ErrorMessage />
-  const cantCreateNewUser = error.status === '422' && <p className={classes.warning}>User already exists</p>
+  const errorMessage = error.message && <ErrorMessage />
+  const usernameTaken = error.username && <p className={classes.warning}>Username already taken</p>
+  const emailTaken = error.email && <p className={classes.warning}>Email already taken</p>
   return (
     <div className={classes.wrapper}>
       {errorMessage}
@@ -121,7 +122,8 @@ const SignUp = ({ isAuthorized, createAcc, error }) => {
         </span>
         <SubmitBtn text="Create" />
         <span className={classes.text}>
-          {cantCreateNewUser}
+          {usernameTaken}
+          {emailTaken}
           Already have an account?
           <Link to="/sign-in"> Sign In</Link>
         </span>

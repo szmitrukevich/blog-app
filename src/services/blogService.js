@@ -12,32 +12,16 @@ export default class BlogService {
     return res.json()
   }
 
-  async postResource(url, body) {
-    console.log('put', body)
+  async sendResource(url, method, body, token) {
+    const headers = { Accept: 'application/json', 'Content-Type': 'application/json' }
+    if (token) {
+      headers.Authorization = `Bearer ${token}`
+    }
     const res = await fetch(`${this._apiBase}${url}`, {
-      method: 'POST',
-      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+      method,
+      headers,
       body: JSON.stringify(body),
     })
-
-    if (!res.ok) {
-      throw new Error(res.status)
-    }
-
-    return res.json()
-  }
-
-  async putResource(url, body, token) {
-    console.log('put', body)
-    const res = await fetch(`${this._apiBase}${url}`, {
-      method: 'PUT',
-      headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(body),
-    })
-
-    if (!res.ok) {
-      throw new Error(res.status)
-    }
 
     return res.json()
   }
@@ -53,10 +37,9 @@ export default class BlogService {
   }
 
   async createAccount(body) {
-    let newAccount
-    console.log('create', body)
     try {
-      newAccount = await this.postResource('users', body)
+      const newAccount = await this.sendResource('users', 'POST', body)
+      if (newAccount.errors) throw new Error(JSON.stringify(newAccount.errors))
       return newAccount.user
     } catch (e) {
       throw new Error(e.message)
@@ -64,9 +47,9 @@ export default class BlogService {
   }
 
   async login(body) {
-    let account
     try {
-      account = await this.postResource('users/login', body)
+      const account = await this.sendResource('users/login', 'POST', body)
+      if (account.errors) throw new Error(JSON.stringify(account.errors))
       return account.user
     } catch (e) {
       throw new Error(e.message)
@@ -74,9 +57,9 @@ export default class BlogService {
   }
 
   async updateProfile(body, token) {
-    let account
     try {
-      account = await this.putResource('user', body, token)
+      const account = await this.sendResource('user', 'PUT', body, token)
+      if (account.errors) throw new Error(JSON.stringify(account.errors))
       return account.user
     } catch (e) {
       throw new Error(e.message)
@@ -84,7 +67,7 @@ export default class BlogService {
   }
 
   async createArticle(body, token) {
-    const article = await this.putResource('articles', body, token)
+    const article = await this.sendResource('articles', 'POST', body, token)
     return article
   }
 }

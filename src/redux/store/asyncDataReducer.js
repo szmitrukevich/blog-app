@@ -6,6 +6,7 @@ import {
   throwError,
   getTotalPages,
   getToken,
+  setChanged,
   getCurrentUser,
   toggleAuthorization,
 } from '../actions/apiActions'
@@ -18,19 +19,11 @@ import {
   GET_TOTAL_PAGES,
   GET_USER_INFO,
   GET_TOKEN,
+  CHANGED,
   TOGGLE_AUTHORIZATION,
 } from '../actions/actionTypes'
 
 const blog = new BlogService()
-blog
-  .createAccount({
-    user: {
-      username: 'ololosh',
-      email: 'zmufgh1234@gmail.com',
-      password: '123456',
-    },
-  })
-  .then((res) => console.log(res))
 const initialState = {
   isLoading: true,
   totalPages: 0,
@@ -40,7 +33,8 @@ const initialState = {
   currentUser: {},
   isAuthorized: false,
   currentArticle: { body: null },
-  error: { isError: false, status: 200 },
+  error: {},
+  succChanged: false,
 }
 
 export const getArticles = (page) => (dispatch) => {
@@ -54,7 +48,7 @@ export const getArticles = (page) => (dispatch) => {
     })
     .catch((e) => {
       dispatch(toggleIsLoading(false))
-      dispatch(throwError([true, e.message]))
+      dispatch(throwError(JSON.parse(e.message)))
     })
 }
 
@@ -66,7 +60,7 @@ export const getArticle = (id) => (dispatch) => {
         dispatch(getSingleArticle(res.article))
       })
       .catch((e) => {
-        dispatch(throwError([true, e.message]))
+        dispatch(throwError(JSON.parse(e.message)))
       })
   }
   dispatch(getSingleArticle({ body: null }))
@@ -90,10 +84,10 @@ export const createNewAcc = (info) => (dispatch) => {
       dispatch(getCurrentUser({ ...data }))
       dispatch(getToken(token))
       dispatch(toggleAuthorization(true))
-      dispatch(throwError([false, 200]))
+      dispatch(throwError({}))
     })
     .catch((e) => {
-      dispatch(throwError([true, e.message]))
+      dispatch(throwError(JSON.parse(e.message)))
     })
 }
 export const login = (info) => (dispatch) => {
@@ -106,10 +100,10 @@ export const login = (info) => (dispatch) => {
       dispatch(getCurrentUser({ ...data }))
       dispatch(getToken(token))
       dispatch(toggleAuthorization(true))
-      dispatch(throwError([false, 200]))
+      dispatch(throwError({}))
     })
     .catch((e) => {
-      dispatch(throwError([true, e.message]))
+      dispatch(throwError(JSON.parse(e.message)))
     })
 }
 
@@ -121,19 +115,25 @@ export const updateProfile = (info, currToken) => (dispatch) => {
       setLocalStorageData(user)
       const { token, ...data } = res
       dispatch(getCurrentUser({ ...data }))
-      dispatch(throwError([false, 200]))
+      dispatch(throwError({}))
+      dispatch(setChanged(true))
     })
     .catch((e) => {
-      dispatch(throwError([true, e.message]))
+      dispatch(throwError(JSON.parse(e.message)))
+      dispatch(setChanged(false))
     })
 }
 
 export const createArticle = (article, currToken) => (dispatch) => {
   blog
     .createArticle(article, currToken)
-    .then(() => dispatch(throwError([false, 200])))
+    .then(() => {
+      dispatch(setChanged(true))
+      dispatch(throwError([false, 200]))
+    })
     .catch((e) => {
       dispatch(throwError([true, e.message]))
+      dispatch(setChanged(false))
     })
 }
 
@@ -153,10 +153,12 @@ const asyncDataReducer = (state = initialState, { type, payload } = {}) => {
       return { ...state, token: payload }
     case TOGGLE_AUTHORIZATION:
       return { ...state, isAuthorized: payload }
+    case CHANGED:
+      return { ...state, succChanged: payload }
     case GET_CURRENT_PAGE:
       return { ...state, currentPage: payload }
     case GET_ERROR:
-      return { ...state, error: { isError: payload[0], status: payload[1] } }
+      return { ...state, error: payload }
     default:
       return state
   }
