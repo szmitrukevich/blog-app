@@ -9,7 +9,7 @@ const HeaderBtn = ({ text, btnStyle, onClick, avatar }) => {
       className={classes.img}
       onError={({ currentTarget }) => {
         currentTarget.onerror = null
-        currentTarget.src = 'https://i.ibb.co/3hcBXPz/a42bcb5c-9140-4967-bd3d-385842c4e42d.jpg'
+        currentTarget.src = 'https://static.productionready.io/images/smiley-cyrus.jpg'
       }}
       alt="avatar"
     />

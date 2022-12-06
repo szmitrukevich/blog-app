@@ -25,7 +25,7 @@ const Header = ({ toggleAuth, isAuthorized, user, logIn }) => {
       link: '/profile',
       style: 'profile',
       text: username || null,
-      avatar: image || 'https://static.productionready.io/images/smiley-cyrus.jpg',
+      avatar: image,
     },
     {
       link: '',
@@ -57,6 +57,7 @@ const Header = ({ toggleAuth, isAuthorized, user, logIn }) => {
         text={btn.text}
         btnStyle={btn.style}
         onClick={btn.onClick}
+        avatar={btn.avatar}
       />
     </Link>
   )
