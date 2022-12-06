@@ -4,9 +4,9 @@ import { Spin } from 'antd'
 import PropTypes from 'prop-types'
 import { getArticles } from '../../redux/store/asyncDataReducer'
 import classes from './ArticleList.module.scss'
-import Article from '../Article'
-import ErrorMessage from '../ErrorMessage'
-import Pagination from '../Pagination'
+import Article from '../../ui/Article'
+import ErrorMessage from '../../ui/ErrorMessage'
+import Pagination from '../../ui/Pagination'
 
 const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPages, currentPage }) => {
   const createArticle = (item) => (

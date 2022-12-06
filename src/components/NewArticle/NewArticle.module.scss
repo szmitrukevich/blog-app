@@ -16,7 +16,7 @@
   .form {
     display: flex;
     flex-direction: column;
-    margin: 0px 21px;
+    width: 100%;
   }
   .label {
     display: flex;
@@ -26,18 +26,8 @@
     font-weight: 500;
     margin-top: 21px;
     position: relative;
-    &:nth-child(4) {
-        & .input {
-            vertical-align: top;
-            height: 168px;
-            &::placeholder {
-                transform: translateY(-65px)
-            }
-        }
-
-    }
   }
-  .input {
+  .input, .text {
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     border: 1px solid #D9D9D9;
     border-radius: 4px;
@@ -54,14 +44,43 @@
       padding: 7px 10px;
     }
   }
+
   .text {
-    margin: 8px;
-    color: #BFBFBF;
-    text-align: center;
-    position: relative;
-    .warning {
-      top: -70px;
+    min-height: 168px;
+  }
+
+  .tags {
+    width: 37%;
+    display: flex;
+  }
+  .container {
+    display: flex;
+    flex-direction: row;
+    & .input {
+      min-width: 300px;
     }
+  }
+  .tagList {
+    display: flex;
+    flex-direction: row;
+    & .input {
+      min-width: 300px;
+      margin-bottom: 5px;
+    }
+  }
+  .deleteTag, .addTag {
+    font-size: 16px;
+    color: red;
+    border: 1px solid red;
+    border-radius: 4px;
+    background-color: white;
+    margin-left: 20px;
+    height: 40px;
+    min-width: 100px;
+  }
+  .addTag {
+    color: #1890FF;
+    border-color: #1890FF;
   }
   .link a{
     color: #1890FF;

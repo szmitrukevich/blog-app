@@ -5,7 +5,7 @@ import { Link, Outlet } from 'react-router-dom'
 import { toggleAuthorization } from '../../redux/actions/apiActions'
 import { login } from '../../redux/store/asyncDataReducer'
 import classes from './Header.module.scss'
-import HeaderBtn from '../HeaderBtn'
+import HeaderBtn from '../../ui/HeaderBtn'
 
 const Header = ({ toggleAuth, isAuthorized, user, logIn }) => {
   const [calls, setCalls] = useState(1)

@@ -6,8 +6,8 @@ import { connect } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { getArticle } from '../../redux/store/asyncDataReducer'
 import classes from './SingleArticle.module.scss'
-import Article from '../Article'
-import ErrorMessage from '../ErrorMessage'
+import Article from '../../ui/Article'
+import ErrorMessage from '../../ui/ErrorMessage'
 
 const SingleArticle = ({ article, error, getCurrentArticle }) => {
   const { id } = useParams()

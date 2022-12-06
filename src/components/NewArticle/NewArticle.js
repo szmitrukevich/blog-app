@@ -1,14 +1,15 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Navigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { connect } from 'react-redux'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
+import { v4 as uuidv4 } from 'uuid'
 import { createArticle } from '../../redux/store/asyncDataReducer'
 import classes from './NewArticle.module.scss'
-import ErrorMessage from '../ErrorMessage'
-import SubmitBtn from '../SubmitBtn'
+import ErrorMessage from '../../ui/ErrorMessage'
+import SubmitBtn from '../../ui/SubmitBtn'
 
 const NewArticle = ({ createNewArticle, error, token, changed }) => {
   const schema = yup.object().shape({
@@ -22,6 +23,44 @@ const NewArticle = ({ createNewArticle, error, token, changed }) => {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
 
+  const [tags, setTags] = useState([])
+  const [tag, setTag] = useState('')
+
+  const handleChange = (event) => {
+    setTag(event.target.value)
+  }
+
+  const handleClick = () => {
+    if (tag) {
+      setTag('')
+      setTags((prev) => [...prev, tag])
+    }
+  }
+
+  const deleteTag = (item) => setTags((prev) => prev.filter((tg) => item !== tg))
+  useEffect(() => {}, [tags.length])
+  const tagList = tags.map((item) => {
+    return (
+      <div
+        className={classes.tagList}
+        key={uuidv4()}
+      >
+        <input
+          className={classes.input}
+          type="text"
+          value={item}
+          readOnly
+        />
+        <button
+          type="button"
+          className={classes.deleteTag}
+          onClick={() => deleteTag(item)}
+        >
+          Delete
+        </button>
+      </div>
+    )
+  })
   const labelList = [
     {
       type: 'text',
@@ -34,12 +73,6 @@ const NewArticle = ({ createNewArticle, error, token, changed }) => {
       id: 'description',
       title: 'Short description',
       placeholder: 'Description',
-    },
-    {
-      type: 'text',
-      id: 'body',
-      title: 'Text',
-      placeholder: 'Text',
     },
   ]
   const createLabel = (label) => {
@@ -72,20 +105,65 @@ const NewArticle = ({ createNewArticle, error, token, changed }) => {
     )
   }
   const labels = labelList.map((item) => createLabel(item))
-  const errorMessage = error.isError && error.status !== '422' && <ErrorMessage />
+  const textError = errors.body && <p className={classes.warning}>{errors.body?.message}</p>
+  const errorMessage = error.message && <ErrorMessage />
   return (
     <div className={classes.wrapper}>
       {errorMessage}
       <form
         className={classes.form}
         onSubmit={handleSubmit((data) => {
-          console.log(data)
-          // createNewArticle({ article: { data } }, token)
+          createNewArticle({ article: { ...data, tagList: tags } }, token)
         })}
       >
         <h1 className={classes.title}>Create new article</h1>
         {labels}
-        <SubmitBtn text="Send" />
+        <label
+          className={classes.label}
+          htmlFor="text"
+        >
+          Text
+          <textarea
+            id="text"
+            className={classes.text}
+            placeholder="Text"
+            {...register('body')}
+            style={{ borderColor: errors.body ? 'red' : '#D9D9D9' }}
+          />
+          {textError}
+        </label>
+        <label
+          className={`${classes.label} ${classes.tags}`}
+          htmlFor="tags"
+        >
+          Tags
+          {tagList}
+          <div className={classes.container}>
+            <input
+              type="text"
+              className={classes.input}
+              placeholder="Tag"
+              id="tags"
+              onChange={handleChange}
+              value={tag}
+            />
+            <button
+              type="button"
+              className={classes.deleteTag}
+              onClick={() => setTag('')}
+            >
+              Delete
+            </button>
+            <button
+              type="button"
+              className={classes.addTag}
+              onClick={handleClick}
+            >
+              Add tag
+            </button>
+          </div>
+          <SubmitBtn text="Send" />
+        </label>
       </form>
     </div>
   )

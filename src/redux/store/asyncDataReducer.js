@@ -129,10 +129,10 @@ export const createArticle = (article, currToken) => (dispatch) => {
     .createArticle(article, currToken)
     .then(() => {
       dispatch(setChanged(true))
-      dispatch(throwError([false, 200]))
+      dispatch(throwError({}))
     })
     .catch((e) => {
-      dispatch(throwError([true, e.message]))
+      dispatch(throwError(JSON.parse(e.message)))
       dispatch(setChanged(false))
     })
 }

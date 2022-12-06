@@ -8,9 +8,9 @@ import * as yup from 'yup'
 import PropTypes from 'prop-types'
 import { createNewAcc } from '../../redux/store/asyncDataReducer'
 import classes from './SignUp.module.scss'
-import SubmitBtn from '../SubmitBtn'
-import ErrorMessage from '../ErrorMessage'
-import { EMAIL_REGEXP, USERNAME_REGEXP } from '../../assets/constants/regexpConstants'
+import SubmitBtn from '../../ui/SubmitBtn'
+import ErrorMessage from '../../ui/ErrorMessage'
+import { USERNAME_REGEXP } from '../../assets/constants/regexpConstants'
 
 const SignUp = ({ isAuthorized, createAcc, error }) => {
   const schema = yup.object().shape({
@@ -20,7 +20,7 @@ const SignUp = ({ isAuthorized, createAcc, error }) => {
       .matches(USERNAME_REGEXP, 'Only Latin characters')
       .min(3, 'Username length should be at least 3 characters')
       .max(20, 'Username cannot exceed more than 20 characters'),
-    email: yup.string().required('Email is required').matches(EMAIL_REGEXP, 'Is not in correct format'),
+    email: yup.string().required('Email is required').email('Is not in correct format'),
     password: yup
       .string()
       .required('Please enter password')

@@ -6,18 +6,7 @@ import AuthorCard from '../AuthorCard'
 import TagList from '../TagList'
 import LikeBtn from '../LkeBtn'
 
-const Article = ({
-  author,
-  description,
-  created,
-  title,
-  tagList,
-  favoritesCount,
-  slug,
-  favorited,
-  isAuthorized,
-  full,
-}) => {
+const Article = ({ author, description, created, title, tagList, likes, slug, favorited, isAuthorized, full }) => {
   useEffect(() => {}, [isAuthorized])
   const link = full ? (
     <h1>{title}</h1>
@@ -37,7 +26,7 @@ const Article = ({
           <LikeBtn
             slug={slug}
             favorited={favorited}
-            likes={favoritesCount}
+            likes={likes}
             isAuthorized={isAuthorized}
           />
         </div>
@@ -62,7 +51,7 @@ Article.defaultProps = {
   created: '',
   title: '',
   tagList: [],
-  favoritesCount: 0,
+  likes: 0,
   slug: '',
   favorited: false,
   isAuthorized: false,
@@ -75,7 +64,7 @@ Article.propTypes = {
   created: PropTypes.string,
   title: PropTypes.string,
   tagList: PropTypes.arrayOf(PropTypes.string),
-  favoritesCount: PropTypes.number,
+  likes: PropTypes.number,
   slug: PropTypes.string,
   favorited: PropTypes.bool,
   isAuthorized: PropTypes.bool,

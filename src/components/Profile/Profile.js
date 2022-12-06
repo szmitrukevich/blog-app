@@ -7,8 +7,8 @@ import * as yup from 'yup'
 import PropTypes from 'prop-types'
 import { updateProfile } from '../../redux/store/asyncDataReducer'
 import classes from './Profile.module.scss'
-import SubmitBtn from '../SubmitBtn'
-import ErrorMessage from '../ErrorMessage'
+import SubmitBtn from '../../ui/SubmitBtn'
+import ErrorMessage from '../../ui/ErrorMessage'
 import { USERNAME_REGEXP } from '../../assets/constants/regexpConstants'
 
 const Profile = ({ updateUserInfo, error, token, changed }) => {

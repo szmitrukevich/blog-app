@@ -7,8 +7,8 @@ import * as yup from 'yup'
 import PropTypes from 'prop-types'
 import { login } from '../../redux/store/asyncDataReducer'
 import classes from './SignIn.module.scss'
-import SubmitBtn from '../SubmitBtn'
-import ErrorMessage from '../ErrorMessage'
+import SubmitBtn from '../../ui/SubmitBtn'
+import ErrorMessage from '../../ui/ErrorMessage'
 
 const SignIn = ({ error, logIn, isAuthorized }) => {
   const schema = yup.object().shape({
