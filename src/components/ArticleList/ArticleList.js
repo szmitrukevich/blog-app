@@ -8,15 +8,15 @@ import Article from '../../ui/Article'
 import ErrorMessage from '../../ui/ErrorMessage'
 import Pagination from '../../ui/Pagination'
 
-const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPages, currentPage }) => {
+const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPages, currentPage, token }) => {
   const createArticle = (item) => (
     <Article
       author={item.author}
       description={item.description}
-      created={item.createdAt}
+      createdAt={item.createdAt}
       title={item.title}
       tagList={item.tagList}
-      likes={item.favoritesCount}
+      favoritesCount={item.favoritesCount}
       slug={item.slug}
       favorited={item.favorited}
       full={false}
@@ -27,7 +27,7 @@ const ArticleList = ({ articlesData, isLoading, error, getArticlesData, totalPag
   let list = articlesData.map((article) => createArticle(article))
 
   useEffect(() => {
-    getArticlesData(currentPage)
+    getArticlesData(currentPage, token)
   }, [articlesData.length, currentPage, error])
 
   const spinner = isLoading && (
@@ -58,6 +58,7 @@ ArticleList.defaultProps = {
   error: {},
   totalPages: 0,
   currentPage: 1,
+  token: '',
 }
 
 ArticleList.propTypes = {
@@ -67,6 +68,7 @@ ArticleList.propTypes = {
   error: PropTypes.shape(),
   totalPages: PropTypes.number,
   currentPage: PropTypes.number,
+  token: PropTypes.string,
 }
 
 function mapStateToProps(state) {
@@ -76,11 +78,12 @@ function mapStateToProps(state) {
     error: state.data.error,
     totalPages: state.data.totalPages,
     currentPage: state.data.currentPage,
+    token: state.data.token,
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return { getArticlesData: (page) => dispatch(getArticles(page)) }
+  return { getArticlesData: (page, token) => dispatch(getArticles(page, token)) }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ArticleList)

@@ -64,7 +64,6 @@ const Header = ({ toggleAuth, isAuthorized, user, logIn }) => {
   const buttons = localStorage.isAuthorized
     ? btnList.slice(0, 3).map((item) => createBtn(item))
     : btnList.slice(3).map((item) => createBtn(item))
-
   return (
     <>
       <div className={classes.wrapper}>

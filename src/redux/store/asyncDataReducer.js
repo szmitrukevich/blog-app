@@ -37,13 +37,14 @@ const initialState = {
   succChanged: false,
 }
 
-export const getArticles = (page) => (dispatch) => {
+export const getArticles = (page, token) => (dispatch) => {
   dispatch(toggleIsLoading(true))
   blog
-    .getArticles(page)
+    .getArticles(page, token)
     .then((res) => {
       dispatch(updateArticleList(res.articles))
       dispatch(getTotalPages(res.articlesCount))
+      dispatch(setChanged(false))
       dispatch(toggleIsLoading(false))
     })
     .catch((e) => {
@@ -52,10 +53,10 @@ export const getArticles = (page) => (dispatch) => {
     })
 }
 
-export const getArticle = (id) => (dispatch) => {
+export const getArticle = (id, token) => (dispatch) => {
   if (id) {
     blog
-      .getArticle(id)
+      .getArticle(id, token)
       .then((res) => {
         dispatch(getSingleArticle(res.article))
       })
@@ -131,6 +132,52 @@ export const createArticle = (article, currToken) => (dispatch) => {
       dispatch(setChanged(true))
       dispatch(throwError({}))
     })
+    .catch((e) => {
+      dispatch(throwError(JSON.parse(e.message)))
+      dispatch(setChanged(false))
+    })
+}
+
+export const deleteArticle = (id, currToken) => (dispatch) => {
+  blog
+    .deleteArticle(id, currToken)
+    .then(() => {
+      dispatch(setChanged(true))
+      dispatch(throwError({}))
+    })
+    .catch((e) => {
+      dispatch(throwError(JSON.parse(e.message)))
+      dispatch(setChanged(false))
+    })
+}
+
+export const updateArticle = (id, article, currToken) => (dispatch) => {
+  blog
+    .updateArticle(id, article, currToken)
+    .then(() => {
+      dispatch(setChanged(true))
+      dispatch(throwError({}))
+    })
+    .catch((e) => {
+      dispatch(throwError(JSON.parse(e.message)))
+      dispatch(setChanged(false))
+    })
+}
+
+export const likeArticle = (id, currToken) => (dispatch) => {
+  blog
+    .likeArticle(id, currToken)
+    .then(() => dispatch(throwError({})))
+    .catch((e) => {
+      dispatch(throwError(JSON.parse(e.message)))
+      dispatch(setChanged(false))
+    })
+}
+
+export const unlikeArticle = (id, currToken) => (dispatch) => {
+  blog
+    .unlikeArticle(id, currToken)
+    .then(() => dispatch(throwError({})))
     .catch((e) => {
       dispatch(throwError(JSON.parse(e.message)))
       dispatch(setChanged(false))

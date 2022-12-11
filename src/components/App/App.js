@@ -11,6 +11,7 @@ import SignIn from '../SignIn'
 import SignUp from '../SignUp'
 import Profile from '../Profile/Profile'
 import NewArticle from '../NewArticle'
+import EditArticle from '../EditArticle'
 
 const App = () => (
   <div className={classes.app}>
@@ -27,6 +28,10 @@ const App = () => (
       <Route
         path="/articles/:id"
         element={<SingleArticle />}
+      />
+      <Route
+        path="/articles/:id/edit"
+        element={<EditArticle />}
       />
       <Route
         path="/sign-in"

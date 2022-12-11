@@ -2,9 +2,12 @@
 export default class BlogService {
   _apiBase = 'https://blog.kata.academy/api/'
 
-  async getResource(url) {
-    const res = await fetch(`${this._apiBase}${url}`)
-
+  async getResource(url, token) {
+    const headers = { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+    const res = await fetch(`${this._apiBase}${url}`, {
+      method: 'GET',
+      headers,
+    })
     if (!res.ok) {
       throw new Error(res.status)
     }
@@ -26,13 +29,22 @@ export default class BlogService {
     return res.json()
   }
 
-  async getArticles(page) {
-    const articles = await this.getResource(`articles?offset=${(page - 1) * 20}`)
+  async deleteResource(url, token) {
+    const headers = { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+    await fetch(`${this._apiBase}${url}`, {
+      method: 'DELETE',
+      headers,
+    })
+    return true
+  }
+
+  async getArticles(page, token) {
+    const articles = await this.getResource(`articles?offset=${(page - 1) * 20}`, token)
     return articles
   }
 
-  async getArticle(id) {
-    const article = await this.getResource(`articles/${id}`)
+  async getArticle(id, token) {
+    const article = await this.getResource(`articles/${id}`, token)
     return article
   }
 
@@ -69,5 +81,45 @@ export default class BlogService {
   async createArticle(body, token) {
     const article = await this.sendResource('articles', 'POST', body, token)
     return article
+  }
+
+  async deleteArticle(id, token) {
+    try {
+      const article = await this.deleteResource(`articles/${id}`, token)
+      if (article.errors) throw new Error(JSON.stringify(article.errors))
+      return article
+    } catch (e) {
+      throw new Error(e.message)
+    }
+  }
+
+  async updateArticle(id, body, token) {
+    try {
+      const article = await this.sendResource(`articles/${id}`, 'PUT', body, token)
+      if (article.errors) throw new Error(JSON.stringify(article.errors))
+      return article
+    } catch (e) {
+      throw new Error(e.message)
+    }
+  }
+
+  async likeArticle(id, token) {
+    try {
+      const like = await this.sendResource(`articles/${id}/favorite`, 'POST', {}, token)
+      if (like.errors) throw new Error(JSON.stringify(like.errors))
+      return like
+    } catch (e) {
+      throw new Error(e.message)
+    }
+  }
+
+  async unlikeArticle(id, token) {
+    try {
+      const like = await this.deleteResource(`articles/${id}/favorite`, token)
+      if (like.errors) throw new Error(JSON.stringify(like.errors))
+      return like
+    } catch (e) {
+      throw new Error(e.message)
+    }
   }
 }

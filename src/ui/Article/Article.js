@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import classes from './Article.module.scss'
@@ -6,8 +6,7 @@ import AuthorCard from '../AuthorCard'
 import TagList from '../TagList'
 import LikeBtn from '../LkeBtn'
 
-const Article = ({ author, description, created, title, tagList, likes, slug, favorited, isAuthorized, full }) => {
-  useEffect(() => {}, [isAuthorized])
+const Article = ({ author, description, createdAt, title, tagList, favoritesCount, slug, favorited, full }) => {
   const link = full ? (
     <h1>{title}</h1>
   ) : (
@@ -18,6 +17,7 @@ const Article = ({ author, description, created, title, tagList, likes, slug, fa
       <h1>{title}</h1>
     </Link>
   )
+
   return (
     <div className={full ? classes.full : classes.wrapper}>
       <div className={classes.container}>
@@ -26,8 +26,7 @@ const Article = ({ author, description, created, title, tagList, likes, slug, fa
           <LikeBtn
             slug={slug}
             favorited={favorited}
-            likes={likes}
-            isAuthorized={isAuthorized}
+            favoritesCount={favoritesCount}
           />
         </div>
         <TagList tagList={tagList} />
@@ -37,8 +36,10 @@ const Article = ({ author, description, created, title, tagList, likes, slug, fa
 
       <div className={classes.container}>
         <AuthorCard
-          created={created}
+          createdAt={createdAt}
           author={author}
+          slug={slug}
+          full={full}
         />
       </div>
     </div>
@@ -48,26 +49,24 @@ const Article = ({ author, description, created, title, tagList, likes, slug, fa
 Article.defaultProps = {
   author: {},
   description: '',
-  created: '',
+  createdAt: '',
   title: '',
   tagList: [],
-  likes: 0,
+  favoritesCount: 0,
   slug: '',
   favorited: false,
-  isAuthorized: false,
   full: false,
 }
 
 Article.propTypes = {
   author: PropTypes.shape(),
   description: PropTypes.string,
-  created: PropTypes.string,
+  createdAt: PropTypes.string,
   title: PropTypes.string,
   tagList: PropTypes.arrayOf(PropTypes.string),
-  likes: PropTypes.number,
+  favoritesCount: PropTypes.number,
   slug: PropTypes.string,
   favorited: PropTypes.bool,
-  isAuthorized: PropTypes.bool,
   full: PropTypes.bool,
 }
 

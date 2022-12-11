@@ -9,15 +9,15 @@ import classes from './SingleArticle.module.scss'
 import Article from '../../ui/Article'
 import ErrorMessage from '../../ui/ErrorMessage'
 
-const SingleArticle = ({ article, error, getCurrentArticle }) => {
+const SingleArticle = ({ article, error, getCurrentArticle, token }) => {
   const { id } = useParams()
   const { body, ...props } = article
   useEffect(() => {
-    getCurrentArticle(id)
+    getCurrentArticle(id, token)
     return () => getCurrentArticle(null)
   }, [id, error])
 
-  const errorMessage = error.isError && error.status !== '422' && <ErrorMessage />
+  const errorMessage = error.message && <ErrorMessage />
 
   return (
     <div className={classes.wrapper}>
@@ -35,22 +35,25 @@ SingleArticle.defaultProps = {
   getCurrentArticle: () => {},
   article: { body: null },
   error: {},
+  token: '',
 }
 
 SingleArticle.propTypes = {
   getCurrentArticle: PropTypes.func,
   article: PropTypes.shape(),
   error: PropTypes.shape(),
+  token: PropTypes.string,
 }
 
 function mapStateToProps(state) {
   return {
     article: state.data.currentArticle,
     error: state.data.error,
+    token: state.data.token,
   }
 }
 
 function mapDispatchToProps(dispatch) {
-  return { getCurrentArticle: (id) => dispatch(getArticle(id)) }
+  return { getCurrentArticle: (id, token) => dispatch(getArticle(id, token)) }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(SingleArticle)
