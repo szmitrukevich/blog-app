@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { Navigate, useParams } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { connect } from 'react-redux'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { v4 as uuidv4 } from 'uuid'
-import { updateArticle, getArticle } from '../../redux/store/asyncDataReducer'
-import classes from './EditArticle.module.scss'
+import { createArticle } from '../../../redux/store/asyncDataReducer'
+import classes from './NewArticle.module.scss'
 import ErrorMessage from '../../ui/ErrorMessage'
 import SubmitBtn from '../../ui/SubmitBtn'
 
-const EditArticle = ({ article, getCurrentArticle, updateCurrArticle, error, token, changedApplied, isAuthorized }) => {
-  const { id } = useParams()
-
-  const { body, description, title, tagList: defaultTags } = article
+const NewArticle = ({ createNewArticle, error, token, changedApplied, isAuthorized }) => {
   const schema = yup.object().shape({
     title: yup.string().required('Please enter title'),
     description: yup.string().required('Please enter description'),
@@ -26,13 +23,10 @@ const EditArticle = ({ article, getCurrentArticle, updateCurrArticle, error, tok
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) })
 
-  const [tags, setTags] = useState(defaultTags)
+  const [tags, setTags] = useState([])
   const [tag, setTag] = useState('')
 
-  useEffect(() => {
-    getCurrentArticle(id)
-    return () => getCurrentArticle(null)
-  }, [tags.length, id])
+  useEffect(() => {}, [tags.length])
 
   const handleChange = (event) => {
     setTag(event.target.value)
@@ -75,14 +69,12 @@ const EditArticle = ({ article, getCurrentArticle, updateCurrArticle, error, tok
       id: 'title',
       title: 'Title',
       placeholder: 'Title',
-      defaultValue: title,
     },
     {
       type: 'text',
       id: 'description',
       title: 'Short description',
       placeholder: 'Description',
-      defaultValue: description,
     },
   ]
   const createLabel = (label) => {
@@ -96,7 +88,6 @@ const EditArticle = ({ article, getCurrentArticle, updateCurrArticle, error, tok
         {label.title}
         <input
           type={label.type}
-          defaultValue={label.defaultValue}
           {...register(`${label.id}`)}
           style={{ borderColor: errors[label.id] ? 'red' : '#D9D9D9' }}
           className={classes.input}
@@ -133,10 +124,10 @@ const EditArticle = ({ article, getCurrentArticle, updateCurrArticle, error, tok
       <form
         className={classes.form}
         onSubmit={handleSubmit((data) => {
-          updateCurrArticle(id, { article: { ...data, tagList: tags } }, token)
+          createNewArticle({ article: { ...data, tagList: tags } }, token)
         })}
       >
-        <h1 className={classes.title}>Edit article</h1>
+        <h1 className={classes.title}>Create new article</h1>
         {labels}
         <label
           className={classes.label}
@@ -146,7 +137,6 @@ const EditArticle = ({ article, getCurrentArticle, updateCurrArticle, error, tok
           <textarea
             id="text"
             className={classes.text}
-            defaultValue={body}
             placeholder="Text"
             {...register('body')}
             style={{ borderColor: errors.body ? 'red' : '#D9D9D9' }}
@@ -190,40 +180,28 @@ const EditArticle = ({ article, getCurrentArticle, updateCurrArticle, error, tok
   )
 }
 
-EditArticle.defaultProps = {
+NewArticle.defaultProps = {
   error: {},
-  article: {},
-  updateCurrArticle: () => null,
-  getCurrentArticle: () => null,
+  createNewArticle: () => null,
   token: '',
   changedApplied: false,
   isAuthorized: false,
 }
 
-EditArticle.propTypes = {
+NewArticle.propTypes = {
   error: PropTypes.shape(),
-  article: PropTypes.shape(),
-  updateCurrArticle: PropTypes.func,
-  getCurrentArticle: PropTypes.func,
+  createNewArticle: PropTypes.func,
   token: PropTypes.string,
   changedApplied: PropTypes.bool,
   isAuthorized: PropTypes.bool,
 }
 
 function mapStateToProps(state) {
-  return {
-    token: state.data.token,
-    changedApplied: state.data.succChanged,
-    isAuthorized: state.data.isAuthorized,
-    article: state.data.currentArticle,
-  }
+  return { token: state.data.token, changedApplied: state.data.succChanged, isAuthorized: state.data.isAuthorized }
 }
 
 function mapDispatchToProps(dispatch) {
-  return {
-    updateCurrArticle: (id, body, token) => dispatch(updateArticle(id, body, token)),
-    getCurrentArticle: (id) => dispatch(getArticle(id)),
-  }
+  return { createNewArticle: (info, token) => dispatch(createArticle(info, token)) }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditArticle)
+export default connect(mapStateToProps, mapDispatchToProps)(NewArticle)

@@ -39,7 +39,7 @@ export default class BlogService {
   }
 
   async getArticles(page, token) {
-    const articles = await this.getResource(`articles?offset=${(page - 1) * 20}`, token)
+    const articles = await this.getResource(`articles?limit=5&offset=${(page - 1) * 5}`, token)
     return articles
   }
 

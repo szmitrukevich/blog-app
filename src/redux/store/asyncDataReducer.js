@@ -104,6 +104,7 @@ export const login = (info) => (dispatch) => {
       dispatch(throwError({}))
     })
     .catch((e) => {
+      localStorage.clear()
       dispatch(throwError(JSON.parse(e.message)))
     })
 }

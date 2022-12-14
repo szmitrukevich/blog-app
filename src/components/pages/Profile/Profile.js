@@ -5,13 +5,22 @@ import { Navigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import PropTypes from 'prop-types'
-import { updateProfile } from '../../redux/store/asyncDataReducer'
+import { updateProfile } from '../../../redux/store/asyncDataReducer'
 import classes from './Profile.module.scss'
 import SubmitBtn from '../../ui/SubmitBtn'
 import ErrorMessage from '../../ui/ErrorMessage'
-import { USERNAME_REGEXP } from '../../assets/constants/regexpConstants'
+import { USERNAME_REGEXP } from '../../../assets/constants/regexpConstants'
 
-const Profile = ({ updateUserInfo, error, token, changed }) => {
+const Profile = ({ updateUserInfo, error, token, changed, isAuthorized, user }) => {
+  const { username, email } = user
+  if (!isAuthorized) {
+    return (
+      <Navigate
+        push
+        to="/sign-in"
+      />
+    )
+  }
   const schema = yup.object().shape(
     {
       username: yup
@@ -48,12 +57,14 @@ const Profile = ({ updateUserInfo, error, token, changed }) => {
       id: 'username',
       title: 'Username',
       placeholder: 'New username',
+      default: username,
     },
     {
       type: 'email',
       id: 'email',
       title: 'Email address',
       placeholder: 'New email address',
+      default: email,
     },
     {
       type: 'password',
@@ -84,6 +95,7 @@ const Profile = ({ updateUserInfo, error, token, changed }) => {
           className={classes.input}
           placeholder={label.placeholder}
           id={label.id}
+          defaultValue={label.default || null}
         />
         {labelError}
       </label>
@@ -135,17 +147,31 @@ const Profile = ({ updateUserInfo, error, token, changed }) => {
   )
 }
 
-Profile.defaultProps = { error: {}, updateUserInfo: () => null, token: '', changed: false }
+Profile.defaultProps = {
+  error: {},
+  updateUserInfo: () => null,
+  token: '',
+  changed: false,
+  isAuthorized: false,
+  user: {},
+}
 
 Profile.propTypes = {
   error: PropTypes.shape(),
   updateUserInfo: PropTypes.func,
   token: PropTypes.string,
   changed: PropTypes.bool,
+  isAuthorized: PropTypes.bool,
+  user: PropTypes.shape(),
 }
 
 function mapStateToProps(state) {
-  return { token: state.data.token, changed: state.data.succChanged }
+  return {
+    token: state.data.token,
+    changed: state.data.succChanged,
+    isAuthorized: state.data.isAuthorized,
+    user: state.data.currentUser,
+  }
 }
 
 function mapDispatchToProps(dispatch) {

@@ -6,11 +6,11 @@ import { Link, Navigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import PropTypes from 'prop-types'
-import { createNewAcc } from '../../redux/store/asyncDataReducer'
+import { createNewAcc } from '../../../redux/store/asyncDataReducer'
 import classes from './SignUp.module.scss'
 import SubmitBtn from '../../ui/SubmitBtn'
 import ErrorMessage from '../../ui/ErrorMessage'
-import { USERNAME_REGEXP } from '../../assets/constants/regexpConstants'
+import { USERNAME_REGEXP } from '../../../assets/constants/regexpConstants'
 
 const SignUp = ({ isAuthorized, createAcc, error }) => {
   const schema = yup.object().shape({

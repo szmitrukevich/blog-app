@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { format } from 'date-fns'
 import { connect } from 'react-redux'
 import { Link, Navigate } from 'react-router-dom'
-import { deleteArticle } from '../../redux/store/asyncDataReducer'
+import { deleteArticle } from '../../../redux/store/asyncDataReducer'
 import classes from './AuthorCard.module.scss'
 
 const AuthorCard = ({ createdAt, author, slug, deleteCurrentArticle, token, full, changedApplied, currentUser }) => {

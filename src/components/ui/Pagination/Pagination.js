@@ -2,7 +2,7 @@ import React from 'react'
 import { Pagination as Pag } from 'antd'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import { getCurrentPage } from '../../redux/actions/apiActions'
+import { getCurrentPage } from '../../../redux/actions/apiActions'
 
 const Pagination = ({ total, current, setPage }) => {
   return (
@@ -10,7 +10,7 @@ const Pagination = ({ total, current, setPage }) => {
       <Pag
         current={current}
         total={total}
-        pageSize={20}
+        pageSize={5}
         onChange={(page) => {
           setPage(page)
         }}

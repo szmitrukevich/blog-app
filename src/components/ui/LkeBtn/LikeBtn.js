@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import classes from './LikeBtn.module.scss'
-import { likeArticle, unlikeArticle } from '../../redux/store/asyncDataReducer'
+import { likeArticle, unlikeArticle } from '../../../redux/store/asyncDataReducer'
 
 const LikeBtn = ({ favoritesCount, favorited, slug, isAuthorized, token, like, unlike }) => {
   useEffect(() => {}, [isAuthorized, favoritesCount])
